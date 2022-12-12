@@ -1,7 +1,7 @@
 import { createMocks } from "node-mocks-http";
 import signinHandler from "../../pages/api/auth/signin";
 
-describe("/api/[animal]", () => {
+describe("/api/auth/signin", () => {
   test("signin user", async () => {
     const { req, res } = createMocks({
       method: "POST",
