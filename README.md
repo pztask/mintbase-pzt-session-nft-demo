@@ -19,3 +19,10 @@ You can start editing the page by modifying `pages/index.tsx`. The page auto-upd
 [API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/<endpoint>](http://localhost:3000/api/<endpoint>). This endpoint can be edited in `pages/api/<endpoint>.ts`.
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+
+## Setup database (sqlite) with Prisma
+
+1. Edit your .env file with the location and database file name you want. (check the existing .env.example)
+2. Run the prisma migrations with: `npx prisma migrate dev`
+3. Run the database seeds: `npx prisma db seed`
+4. The demo is now ready to use the database.

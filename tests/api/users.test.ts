@@ -1,5 +1,5 @@
 import { createMocks } from "node-mocks-http";
-import signinHandler from "../../pages/api/auth/signin";
+import signinHandler from "../../pages/api/auth/old_signin";
 
 describe("/api/auth/signin", () => {
   test("signin user", async () => {
