@@ -6,6 +6,29 @@ import { checkPass } from "../../../utils/password-hash";
 
 const prisma = new PrismaClient();
 
+export async function checkCredentials(credentials: any) {
+  // Add logic here to look up the user from the credentials supplied
+  if (credentials) {
+    const user = await prisma.user.findUnique({
+      where: { email: credentials.email },
+    });
+
+    if (user) {
+      // Any object returned will be saved in `user` property of the JWT
+      const hasCorrectPassword = await checkPass(
+        credentials.password,
+        user.encrypted_password
+      );
+
+      if (hasCorrectPassword) {
+        // FIXME: https://github.com/nextauthjs/next-auth/issues/2709
+        return user.email as any;
+      }
+    }
+  }
+  return null;
+}
+
 export const authOptions = {
   // Configure one or more authentication providers
   providers: [
@@ -20,31 +43,12 @@ export const authOptions = {
         email: {
           label: "Email",
           type: "text",
-          placeholder: "jsmith@example.com",
+          placeholder: "john.doe@example.com",
         },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        // Add logic here to look up the user from the credentials supplied
-        if (credentials) {
-          const user = await prisma.user.findUnique({
-            where: { email: credentials.email },
-          });
-
-          if (user) {
-            // Any object returned will be saved in `user` property of the JWT
-            const hasCorrectPassword = await checkPass(
-              credentials.password,
-              user.encrypted_password
-            );
-
-            if (hasCorrectPassword) {
-              // FIXME: https://github.com/nextauthjs/next-auth/issues/2709
-              return user.email as any;
-            }
-          }
-        }
-        return null;
+        return await checkCredentials(credentials);
       },
     }),
   ],

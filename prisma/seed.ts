@@ -4,15 +4,23 @@ import { hashPass } from "../utils/password-hash";
 const prisma = new PrismaClient();
 
 async function main() {
-  const test_user = await prisma.user.upsert({
-    where: { email: "test.user@example.com" },
+  const john_doe = await prisma.user.upsert({
+    where: { email: "john.doe@example.com" },
     update: {},
     create: {
-      email: "test.user@example.com",
-      encrypted_password: await hashPass("dummy_password"),
+      email: "john.doe@example.com",
+      encrypted_password: await hashPass("password1"),
     },
   });
-  console.log({ test_user });
+  const jane_doe = await prisma.user.upsert({
+    where: { email: "jane.doe@example.com" },
+    update: {},
+    create: {
+      email: "jane.doe@example.com",
+      encrypted_password: await hashPass("password1"),
+    },
+  });
+  console.log({ john_doe, jane_doe });
 }
 main()
   .then(async () => {
