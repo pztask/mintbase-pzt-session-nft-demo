@@ -1,10 +1,8 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import NextAuth from "next-auth";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../../prisma/client";
 
 import { checkPass } from "../../../utils/password-hash";
-
-const prisma = new PrismaClient();
 
 export async function checkCredentials(credentials: any) {
   // Add logic here to look up the user from the credentials supplied
