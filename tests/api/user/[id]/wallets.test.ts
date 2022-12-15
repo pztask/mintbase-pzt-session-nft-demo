@@ -1,6 +1,6 @@
 import { createMocks } from "node-mocks-http";
 import { prismaMock } from "../../../../prisma/singleton";
-import handleWallet, { handler } from "../../../../pages/api/user/[id]/wallet";
+import { handler } from "../../../../pages/api/user/[id]/wallet";
 
 describe("/api/user/[id]/wallet", () => {
   beforeEach(async () => {
