@@ -1,21 +1,21 @@
-import { Prisma, User, Wallet } from "@prisma/client";
+import { Prisma, Wallet } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import prisma from "../../../../prisma/client";
 import tokenAuth from "../../../../utils/token-auth";
 
-type Response = {
+type GenericResponse = {
   msg: string;
 };
 
-async function getUser(
-  userId: string | string[] | undefined,
-  res: NextApiResponse
-) {
-  if (typeof userId == "string" && userId != undefined) {
+async function getUser(userId: string | string[] | undefined) {
+  if (typeof userId == "string") {
     const user = await prisma.user.findUnique({
       where: {
         id: parseInt(userId),
+      },
+      include: {
+        wallet: true,
       },
     });
     return user;
@@ -26,17 +26,23 @@ async function getUser(
 
 export async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Response>
+  res: NextApiResponse<GenericResponse | Wallet>
 ) {
   const method = req.method;
   const userId = req.query.id;
 
+  let user;
   switch (method) {
     case "GET":
-      res.status(200);
+      user = await getUser(userId);
+      if (user && user.wallet) {
+        res.status(200).json(user.wallet);
+      } else {
+        res.status(404).end();
+      }
       break;
     case "POST":
-      const user = await getUser(userId, res);
+      user = await getUser(userId);
       if (user) {
         let validated_body = Prisma.validator<Prisma.WalletCreateInput>()({
           ...req.body,
@@ -59,7 +65,7 @@ export async function handler(
           }
         }
       } else {
-        res.status(404);
+        res.status(404).end();
       }
       break;
     default:

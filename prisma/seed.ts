@@ -20,7 +20,17 @@ async function main() {
       encrypted_password: await hashPass("password1"),
     },
   });
-  console.log({ john_doe, jane_doe });
+
+  const jane_doe_wallet = await prisma.wallet.upsert({
+    where: { address: "dummy_address" },
+    update: {},
+    create: {
+      address: "dummy_address",
+      userId: jane_doe.id,
+    },
+  });
+
+  console.log({ john_doe, jane_doe, jane_doe_wallet });
 }
 main()
   .then(async () => {
