@@ -22,3 +22,26 @@ The `pages/api` directory is mapped to `/api/*`. Files in this directory are tre
 
 [Mintbase]
 Add a Mintbase API key to the .env file in order to enable its functionality
+
+## Setup database (sqlite) with Prisma
+
+1. Edit your .env file with the location and database file name you want. (check the existing .env.example)
+2. Run the prisma migrations with:
+
+```
+npx prisma migrate dev
+```
+
+3. Run the database seeds:
+
+```
+npx prisma db seed
+```
+
+4. The demo is now ready to use the database.
+
+**Note:** If you need a clean fresh database, run this:
+
+```
+npx prisma migrate reset
+```

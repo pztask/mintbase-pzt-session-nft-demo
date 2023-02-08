@@ -2,6 +2,7 @@ import type { AppProps } from "next/app";
 import { EState, MbButton } from "mintbase-ui";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { SessionProvider } from "next-auth/react";
 
 import { WalletProvider } from "../services/providers/MintbaseWalletContext";
 import { useWallet } from "../services/providers/MintbaseWalletContext";
@@ -68,7 +69,10 @@ export const SignInButton = ({
   );
 };
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) {
   const { wallet, isConnected, details } = useWallet();
   const [isSignedIn, setIsSignedIn] = useState(false);
 
@@ -85,22 +89,27 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [isSignedIn, isConnected]);
 
   return (
-    <WalletProvider apiKey={process.env.MINTBASEJS_API_KEY || ""}>
-      <header className={styles.header}>
-        <div className={styles["header-card"]}>
-          <SignInButton isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} />
-          <WalletConnectButton
-            wallet={wallet}
-            isConnected={isConnected}
-            details={details}
-          />
-        </div>
-      </header>
-      <Component
-        {...pageProps}
-        isSignedIn={isSignedIn}
-        setIsSignedIn={setIsSignedIn}
-      />
-    </WalletProvider>
+    <SessionProvider session={session}>
+      <WalletProvider apiKey={process.env.MINTBASEJS_API_KEY || ""}>
+        <header className={styles.header}>
+          <div className={styles["header-card"]}>
+            <SignInButton
+              isSignedIn={isSignedIn}
+              setIsSignedIn={setIsSignedIn}
+            />
+            <WalletConnectButton
+              wallet={wallet}
+              isConnected={isConnected}
+              details={details}
+            />
+          </div>
+        </header>
+        <Component
+          {...pageProps}
+          isSignedIn={isSignedIn}
+          setIsSignedIn={setIsSignedIn}
+        />
+      </WalletProvider>
+    </SessionProvider>
   );
 }
