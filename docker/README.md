@@ -29,10 +29,12 @@ First you need to build the docker image used to build the contract.
 docker build -t pzt/smart_contract_deploy ./smart_contract_deploy
 ```
 
+You will be prompted to follow the wallet login, by copying and pasting the given url on your browser and then approving the access on you account. If the redirect doesn't work in the end, just copy your account id and paste it on the terminal.
+
 After the docker image is built, then we use it to run and deploy our smart contract on near.
 
 ```
-docker run --env-file='../.env' -it pzt/smart_contract_deploy
+docker run --env-file='./.env' -it pzt/smart_contract_deploy
 ```
 
 ## 3. Add data to the api
