@@ -1,0 +1,8 @@
+#!/bin/bash
+
+near login
+git clone $CONTRACT_REPO smart_contract
+cd smart_contract
+yarn install
+yarn build
+near deploy --wasmFile out/main.wasm --accountId $NEAR_CONTRACT_ID

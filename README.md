@@ -29,13 +29,13 @@ Add a Mintbase API key to the .env file in order to enable its functionality
 2. Run the prisma migrations with:
 
 ```
-npx prisma migrate dev
+yarn run prisma migrate dev
 ```
 
 3. Run the database seeds:
 
 ```
-npx prisma db seed
+yarn run prisma db seed
 ```
 
 4. The demo is now ready to use the database.
@@ -43,5 +43,5 @@ npx prisma db seed
 **Note:** If you need a clean fresh database, run this:
 
 ```
-npx prisma migrate reset
+yarn run prisma migrate reset
 ```
