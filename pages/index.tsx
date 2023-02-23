@@ -1,11 +1,11 @@
 import Head from "next/head";
 import Image from "next/image";
-import Link from "next/link";
 
 import {
   usePuzzletaskMintbaseContext,
   UserWalletMatchStates,
 } from "../services/providers/PuzzletaskMintbaseContext";
+import LinkWDisable from "../components/LinkWDisable";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
@@ -70,22 +70,42 @@ export default function Home() {
         {renderPageHeader()}
 
         <div className={styles.grid}>
-          <Link href={"/nft/mint"} className={styles.card}>
+          <LinkWDisable
+            disabled={!actionsEnabled}
+            enabledHref={"/nft/mint"}
+            enabledClassName={styles.card}
+            disabledClassName={styles.card}
+          >
             <h2>Mint NFT &rarr;</h2>
             <p>WIP</p>
-          </Link>
-          <Link href={"/nft/transfer"} className={styles.card}>
+          </LinkWDisable>
+          <LinkWDisable
+            disabled={!actionsEnabled}
+            enabledHref={"/nft/transfer"}
+            enabledClassName={styles.card}
+            disabledClassName={styles.card}
+          >
             <h2>Transfer NFT &rarr;</h2>
             <p>WIP</p>
-          </Link>
-          <Link href={"/nft/burn"} className={styles.card}>
+          </LinkWDisable>
+          <LinkWDisable
+            disabled={!actionsEnabled}
+            enabledHref={"/nft/burn"}
+            enabledClassName={styles.card}
+            disabledClassName={styles.card}
+          >
             <h2>Burn NFT &rarr;</h2>
             <p>WIP</p>
-          </Link>
-          <Link href={"/nft/login"} className={styles.card}>
+          </LinkWDisable>
+          <LinkWDisable
+            disabled={pztAuthenticated}
+            enabledHref={"/login"}
+            enabledClassName={styles.card}
+            disabledClassName={styles.card}
+          >
             <h2>Log In &rarr;</h2>
             <p>WIP</p>
-          </Link>
+          </LinkWDisable>
         </div>
       </main>
 
