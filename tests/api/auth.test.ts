@@ -21,7 +21,7 @@ describe("checkCredentials", () => {
       password: "password",
     });
 
-    expect(result).toBe("john.doe@example.com");
+    expect(result).toBe({ email: "john.doe@example.com", id: 1 });
   });
 
   test("Fail to check user", async () => {

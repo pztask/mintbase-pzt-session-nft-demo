@@ -2,9 +2,60 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 
+import {
+  usePuzzletaskMintbaseContext,
+  UserWalletMatchStates,
+} from "../services/providers/PuzzletaskMintbaseContext";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
+  const {
+    pztAuthenticated,
+    pztSession,
+    mntbWalletConnected,
+    associateWallet,
+    userWalletMatches,
+  } = usePuzzletaskMintbaseContext();
+
+  const actionsEnabled =
+    userWalletMatches === UserWalletMatchStates.USER_WALLET_MATCHES;
+
+  function renderPageHeader() {
+    if (actionsEnabled) {
+      return (
+        <h1 className={styles.description}>
+          You are ready to perform actions.
+        </h1>
+      );
+    } else if (pztAuthenticated && mntbWalletConnected) {
+      return (
+        <>
+          <h1 className={styles.description}>
+            Your near wallet does not match the wallet associated with your
+            account. Associate this wallet?
+          </h1>
+          <input
+            type="button"
+            value="Associate Wallet"
+            onClick={() => associateWallet && associateWallet()}
+          />
+        </>
+      );
+    } else if (!pztAuthenticated && mntbWalletConnected) {
+      return <h1 className={styles.description}>Please login.</h1>;
+    } else if (pztAuthenticated && !mntbWalletConnected) {
+      return (
+        <h1 className={styles.description}>Please connect your wallet.</h1>
+      );
+    } else {
+      return (
+        <h1 className={styles.description}>
+          Please login and connect your wallet.
+        </h1>
+      );
+    }
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -15,9 +66,8 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>Welcome to the demo!</h1>
-        <h1 className={styles.description}>
-          Please login and connect your wallet.
-        </h1>
+
+        {renderPageHeader()}
 
         <div className={styles.grid}>
           <Link href={"/nft/mint"} className={styles.card}>

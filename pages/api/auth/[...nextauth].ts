@@ -20,7 +20,8 @@ export async function checkCredentials(credentials: any) {
 
       if (hasCorrectPassword) {
         // FIXME: https://github.com/nextauthjs/next-auth/issues/2709
-        return user.email as any;
+        console.log(user);
+        return { id: user.id, email: user.email } as any;
       }
     }
   }
@@ -50,6 +51,14 @@ export const authOptions = {
       },
     }),
   ],
+  callbacks: {
+    async session({ session, token, user }: any) {
+      // Send properties to the client, like an access_token and user id from a provider.
+      session.user.id = token.sub;
+
+      return session;
+    },
+  },
 };
 
 export default NextAuth(authOptions);

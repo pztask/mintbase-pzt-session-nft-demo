@@ -45,13 +45,17 @@ export async function handler(
       user = await getUser(userId);
       if (user) {
         let validated_body = Prisma.validator<Prisma.WalletCreateInput>()({
-          ...req.body,
+          ...(typeof req.body === "string" ? JSON.parse(req.body) : req.body),
           userId: user.id,
         });
         try {
+          console.log("userId", user.id);
           await prisma.wallet.upsert({
             where: {
-              address: req.body.address,
+              address: (typeof req.body === "string"
+                ? JSON.parse(req.body)
+                : req.body
+              ).address,
             },
             update: {
               userId: user.id,

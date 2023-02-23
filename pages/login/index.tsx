@@ -1,25 +1,23 @@
 import { useState } from "react";
 import Head from "next/head";
+import { useSession, signIn } from "next-auth/react";
 
 import styles from "../../styles/Home.module.css";
 
-export default function LogInPage(props: {
-  isSignedIn: boolean;
-  setIsSignedIn: (value: boolean) => void;
-}) {
-  const { isSignedIn, setIsSignedIn } = props;
-  const [usernameText, setUsernameText] = useState("");
+export default function LogInPage() {
+  const { status } = useSession();
+  const [emailText, setemailText] = useState("");
   const [passwordText, setPasswordText] = useState("");
 
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Log in</title>
-        <meta name="description" content="Log in page" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+  function renderAlreadyAuthenticated() {
+    return (
+      <h1 className={styles.description}>You are already authenticated</h1>
+    );
+  }
 
-      <main className={styles.main}>
+  function renderLogInForm() {
+    return (
+      <>
         <h1 className={styles.description}>
           Please login and connect your wallet.
         </h1>
@@ -28,12 +26,12 @@ export default function LogInPage(props: {
           <div className={styles["login-card"]}>
             <form className={styles["login-form"]}>
               <label>
-                Username:
+                Email:
                 <input
                   type="text"
-                  name="username"
-                  value={usernameText}
-                  onChange={(e) => setUsernameText(e.target.value)}
+                  name="email"
+                  value={emailText}
+                  onChange={(e) => setemailText(e.target.value)}
                 />
               </label>
               <label>
@@ -48,11 +46,33 @@ export default function LogInPage(props: {
               <input
                 type="button"
                 value="Submit"
-                onClick={() => setIsSignedIn(true)}
+                onClick={() =>
+                  signIn("credentials", {
+                    email: emailText,
+                    password: passwordText,
+                    callbackUrl: "/",
+                  })
+                }
               />
             </form>
           </div>
         </div>
+      </>
+    );
+  }
+
+  return (
+    <div className={styles.container}>
+      <Head>
+        <title>Log in</title>
+        <meta name="description" content="Log in page" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <main className={styles.main}>
+        {status === "authenticated"
+          ? renderAlreadyAuthenticated()
+          : renderLogInForm()}
       </main>
     </div>
   );
