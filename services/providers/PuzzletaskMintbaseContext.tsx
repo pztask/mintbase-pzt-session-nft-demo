@@ -109,8 +109,8 @@ interface PztMntbConsumer {
       id: number;
     };
   } | null;
-  userWalletMatches: UserWalletMatchStates;
   pztAuthenticated: boolean;
+  userWalletMatches: UserWalletMatchStates;
   associateWallet?: () => void;
 }
 
