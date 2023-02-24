@@ -49,7 +49,11 @@ export async function handler(
           userId: user.id,
         });
         try {
-          console.log("userId", user.id);
+          await prisma.wallet.delete({
+            where: {
+              userId: user.id,
+            },
+          });
           await prisma.wallet.upsert({
             where: {
               address: (typeof req.body === "string"
