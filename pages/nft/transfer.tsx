@@ -25,7 +25,7 @@ export default function TransferPage() {
         header = (
           <>
             <h1 className={styles.description}>
-              Your near wallet does not match the wallet associated with your
+              Your Near wallet does not match the wallet associated with your
               account. Associate this wallet?
             </h1>
             <input
