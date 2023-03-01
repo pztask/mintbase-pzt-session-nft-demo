@@ -2,6 +2,8 @@
 
 Instructions on how to setup the demo environment using docker and docker-compose.
 
+This docker-compose demo instructions assume you're in this "docker" directory.
+
 ## Requirements
 
 - [docker](https://docs.docker.com/get-docker/)
@@ -29,17 +31,19 @@ First you need to build the docker image used to build the contract.
 docker build -t pzt/smart_contract_deploy ./smart_contract_deploy
 ```
 
-You will be prompted to follow the wallet login, by copying and pasting the given url on your browser and then approving the access on you account. If the redirect doesn't work in the end, just copy your account id and paste it on the terminal.
-
 After the docker image is built, then we use it to run and deploy our smart contract on near.
 
+You will be prompted to follow the wallet login, by copying and pasting the given url on your browser and then approving the access on your **account where the contract will be deployed**. If the redirect doesn't work in the end, just insert your account id on the terminal.
+
+If you're running the following command for the second time, you'll get a warning saying that the contract has already been initialized, just ignore it.
+
 ```
-docker run --env-file='./.env' -it pzt/smart_contract_deploy
+docker run --env-file='.env' -it pzt/smart_contract_deploy
 ```
 
 ## 3. Add data to the api
 
-The api comes with some only two test users available in the `prisma/seed.ts` file.
+The api comes with only two test users available in the `prisma/seed.ts` file.
 
 ```
 john.doe@example.com:password1
@@ -50,13 +54,15 @@ These should be enough to test the demo, but if you want to add and test your cu
 
 ## 4. Start the docker-compose environment
 
+This step requires you to create your onw version of the **project root's .env** file. Copy .env.example to .env and set it accordingly.
+
 You can just run the following command and everything should the ready to go:
 
 ```
 docker-compose up --build
 ```
 
-Now you should have the api and frontend running and the oracle bot pinging the smart contract checking for new permits to verify. You should be able to access the demo frontend page on http://localhost:3000.
+Now you should have the api and frontend running and the oracle bot checking the smart contract for new permits to verify. You should be able to access the demo frontend page on http://localhost:3000.
 
 A healthy docker-compose environment should output something like this:
 

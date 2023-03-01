@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 near login
 git clone $CONTRACT_REPO smart_contract
@@ -6,3 +6,4 @@ cd smart_contract
 yarn install
 yarn build
 near deploy --wasmFile out/main.wasm --accountId $NEAR_CONTRACT_ID
+near call $NEAR_CONTRACT_ID new_default_meta '{"owner_id": "'$NEAR_CONTRACT_ID'"}' --accountId $NEAR_CONTRACT_ID
