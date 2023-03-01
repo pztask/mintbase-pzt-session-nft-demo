@@ -23,28 +23,16 @@ import styles from "../../styles/Home.module.css";
 
 // TODO: Review props declaration
 export const WalletConnectButton = ({
-  wallet,
-  // isConnected,
-  details,
+  isConnected,
+  connect,
+  disconnect,
+  activeAccountId,
 }: {
-  wallet: Wallet | undefined;
-  // isConnected: boolean;
-  details: {
-    accountId: string;
-    balance: string;
-    allowance: string;
-    contractName: string;
-  };
+  isConnected: boolean;
+  connect: () => void;
+  disconnect: () => void;
+  activeAccountId: string | null;
 }) => {
-  const {
-    connect,
-    disconnect,
-    activeAccountId,
-    selector,
-    isConnected,
-    errorMessage,
-  } = useWallet();
-
   return (
     <MbButton
       label={
@@ -55,7 +43,7 @@ export const WalletConnectButton = ({
         isConnected
           ? () => {
               disconnect();
-              window.location.reload();
+              window.location.reload(); // TODO: Check if needed
             }
           : () => {
               connect();
@@ -108,13 +96,7 @@ interface PztWallet {
 
 interface PztMntbConsumer {
   mntbWallet: {
-    wallet: Wallet | undefined;
-    details: {
-      accountId: string;
-      balance: string;
-      allowance: string;
-      contractName: string;
-    };
+    activeAccountId: string;
   } | null;
   mntbWalletConnected: boolean;
   pztSession: {
@@ -148,7 +130,14 @@ export default function PuzzletaskMintbaseProvider({
   );
   const [nearContract, setNearContract] = useState<any>(null);
   const { status, data: session } = useSession();
-  const { wallet, isConnected, details } = useWalletOLD();
+  const {
+    connect,
+    disconnect,
+    activeAccountId,
+    selector,
+    isConnected,
+    errorMessage,
+  } = useWallet();
   const isSignedIn = status === "authenticated";
 
   // Set up mintbase sdk
@@ -163,7 +152,7 @@ export default function PuzzletaskMintbaseProvider({
 
   // Create contract connection for direct interaction
   async function handleContractSet() {
-    const contract = await NearContract(wallet);
+    const contract = await NearContract(activeAccountId);
     setNearContract(contract);
   }
 
@@ -177,7 +166,7 @@ export default function PuzzletaskMintbaseProvider({
   // Check account/wallet relation status
   useEffect(() => {
     if (isConnected && userWallet !== null) {
-      if ("address" in userWallet && userWallet.address === details.accountId) {
+      if ("address" in userWallet && userWallet.address === activeAccountId) {
         setUserWalletMatches(UserWalletMatchStates.USER_WALLET_MATCHES);
       } else {
         setUserWalletMatches(UserWalletMatchStates.USER_WALLET_NOT_MATCHES);
@@ -189,7 +178,7 @@ export default function PuzzletaskMintbaseProvider({
     } else if (!isConnected && userWallet === null) {
       setUserWalletMatches(UserWalletMatchStates.NO_WALLETS);
     }
-  }, [isConnected, userWallet, details.accountId]);
+  }, [isConnected, userWallet, activeAccountId]);
 
   async function fetchUserWallet() {
     const response = await fetch(
@@ -226,7 +215,7 @@ export default function PuzzletaskMintbaseProvider({
       {
         method: "POST",
         body: JSON.stringify({
-          address: details.accountId,
+          address: activeAccountId,
         }),
       }
     ).then((response) => {
@@ -243,14 +232,14 @@ export default function PuzzletaskMintbaseProvider({
       // Request permit to contract
       const permitResponse = nearContract.request_permit({
         user: (session as any)?.user?.id,
-        wallet: details.accountId,
+        wallet: activeAccountId,
       });
       // TODO: verify if request_permit was successful
     } else {
       // TODO: Error handling
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, details, nearContract]);
+  }, [session, activeAccountId, nearContract]);
 
   const getUserNFTs = useCallback(async () => {
     const response = await nearContract.nft_view({
@@ -267,8 +256,7 @@ export default function PuzzletaskMintbaseProvider({
   function resolveContextValues() {
     const mntbWallet = isConnected
       ? {
-          wallet,
-          details,
+          activeAccountId: activeAccountId ?? "",
         }
       : null;
     const mntbWalletConnected = isConnected;
@@ -310,9 +298,10 @@ export default function PuzzletaskMintbaseProvider({
             email={session?.user?.email ?? ""}
           />
           <WalletConnectButton
-            wallet={wallet}
-            // isConnected={isConnected}
-            details={details}
+            connect={connect}
+            disconnect={disconnect}
+            isConnected={isConnected}
+            activeAccountId={activeAccountId}
           />
         </div>
       </header>
