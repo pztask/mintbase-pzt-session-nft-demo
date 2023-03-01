@@ -4,6 +4,7 @@ import {
   useState,
   createContext,
   useContext,
+  useCallback,
   useMemo,
 } from "react";
 import { useRouter } from "next/router";
@@ -112,7 +113,8 @@ interface PztMntbConsumer {
   } | null;
   pztAuthenticated: boolean;
   userWalletMatches: UserWalletMatchStates;
-  associateWallet?: () => void;
+  associateWallet?: () => Promise<void>;
+  getUserNFTs?: () => Promise<Array<any>>;
 }
 
 export const PztMntbContext = createContext<PztMntbConsumer>({
@@ -180,7 +182,19 @@ export default function PuzzletaskMintbaseProvider({
     setUserWallet(response);
   }
 
-  async function associateWallet() {
+  useEffect(() => {
+    // User logged in
+    if (isSignedIn && userWallet === null) {
+      fetchUserWallet();
+    }
+    // User logged out
+    if (!isSignedIn && userWallet !== null) {
+      setUserWallet(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSignedIn, isConnected, userWallet]);
+
+  const associateWallet = useCallback(async () => {
     const response = await fetch(
       `/api/user/${(session as any)?.user?.id}/wallet`,
       {
@@ -209,19 +223,18 @@ export default function PuzzletaskMintbaseProvider({
     } else {
       // TODO: Error handling
     }
-  }
-
-  useEffect(() => {
-    // User logged in
-    if (isSignedIn && userWallet === null) {
-      fetchUserWallet();
-    }
-    // User logged out
-    if (!isSignedIn && userWallet !== null) {
-      setUserWallet(null);
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSignedIn, isConnected, userWallet]);
+  }, [session, details, nearContract]);
+
+  const getUserNFTs = useCallback(async () => {
+    const response = await nearContract.nft_view({
+      user: (session as any)?.user?.id,
+    });
+
+    // TODO: verify if nft_view was successful
+
+    return response;
+  }, [nearContract, session]);
 
   function resolveContextValues() {
     const mntbWallet = isConnected
@@ -249,7 +262,8 @@ export default function PuzzletaskMintbaseProvider({
       pztSession,
       pztAuthenticated,
       userWalletMatches,
-      associateWallet: () => associateWallet(),
+      associateWallet: associateWallet,
+      getUserNFTs: getUserNFTs,
     };
   }
 

@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   usePuzzletaskMintbaseContext,
   UserWalletMatchStates,
@@ -5,8 +6,24 @@ import {
 import styles from "../../styles/Home.module.css";
 
 export default function MintPage() {
-  const { associateWallet, userWalletMatches } = usePuzzletaskMintbaseContext();
+  const { associateWallet, userWalletMatches, getUserNFTs } =
+    usePuzzletaskMintbaseContext();
 
+  const [userNFTs, setUserNFTs] = useState<any>(null);
+
+  const onLoad = useCallback(async () => {
+    const nfts = getUserNFTs && (await getUserNFTs());
+    setUserNFTs(nfts);
+  }, [getUserNFTs]);
+
+  useEffect(() => {
+    onLoad();
+  }, [onLoad]);
+
+  const nftCollection = useMemo(
+    async () => getUserNFTs && (await getUserNFTs()),
+    [getUserNFTs]
+  );
   const actionsEnabled =
     userWalletMatches === UserWalletMatchStates.USER_WALLET_MATCHES;
 
@@ -14,11 +31,16 @@ export default function MintPage() {
     let header = null;
     switch (userWalletMatches) {
       case UserWalletMatchStates.USER_WALLET_MATCHES:
-        header = (
-          <h1 className={styles.description}>
-            Press the button to mint your NFT (TODO: Check if there is an NFT)
-          </h1>
-        );
+        header =
+          userNFTs.length === 0 ? (
+            <h1 className={styles.description}>
+              Press the button to mint your NFT (TODO: Check if there is an NFT)
+            </h1>
+          ) : (
+            <h1 className={styles.description}>
+              You already minted an nft. Burn it to be able to mint again.
+            </h1>
+          );
         break;
       case UserWalletMatchStates.USER_WALLET_NOT_MATCHES:
         header = (
