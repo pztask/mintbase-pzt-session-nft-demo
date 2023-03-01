@@ -13,6 +13,7 @@ import { EState, MbButton } from "mintbase-ui";
 import { SessionProvider, signOut, useSession } from "next-auth/react";
 
 import { WalletProvider, useWallet } from "./MintbaseWalletContext";
+import { NearContract } from "../../lib/near";
 import styles from "../../styles/Home.module.css";
 
 // TODO: Review props declaration
@@ -130,6 +131,7 @@ export default function PuzzletaskMintbaseProvider({
   const [userWalletMatches, setUserWalletMatches] = useState(
     UserWalletMatchStates.NO_USER_WALLET
   );
+  const [nearContract, setNearContract] = useState<any>(null);
   const { status, data: session } = useSession();
   const { wallet, isConnected, details } = useWallet();
   const isSignedIn = status === "authenticated";
@@ -149,6 +151,18 @@ export default function PuzzletaskMintbaseProvider({
       setUserWalletMatches(UserWalletMatchStates.NO_WALLETS);
     }
   }, [isConnected, userWallet, details.accountId]);
+
+  async function handleContractSet() {
+    const contract = await NearContract(wallet);
+    setNearContract(contract);
+  }
+
+  useEffect(() => {
+    if (isConnected) {
+      handleContractSet();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected]);
 
   async function fetchUserWallet() {
     const response = await fetch(
@@ -184,7 +198,14 @@ export default function PuzzletaskMintbaseProvider({
     });
 
     if (response !== null) {
+      // Get wallet data
       await fetchUserWallet();
+      // Request permit to contract
+      const permitResponse = nearContract.request_permit({
+        user: (session as any)?.user?.id,
+        wallet: details.accountId,
+      });
+      // TODO: verify if request_permit was successful
     } else {
       // TODO: Error handling
     }
