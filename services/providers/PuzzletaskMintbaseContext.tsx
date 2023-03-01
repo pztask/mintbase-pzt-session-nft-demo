@@ -8,23 +8,27 @@ import {
   useMemo,
 } from "react";
 import { useRouter } from "next/router";
-
+import { useWallet } from "@mintbase-js/react";
 import { Wallet } from "mintbase";
 import { EState, MbButton } from "mintbase-ui";
 import { SessionProvider, signOut, useSession } from "next-auth/react";
+import { mbjs } from "@mintbase-js/sdk";
 
-import { WalletProvider, useWallet } from "./MintbaseWalletContext";
+import {
+  WalletProvider,
+  useWallet as useWalletOLD,
+} from "./MintbaseWalletContext";
 import { NearContract } from "../../lib/near";
 import styles from "../../styles/Home.module.css";
 
 // TODO: Review props declaration
 export const WalletConnectButton = ({
   wallet,
-  isConnected,
+  // isConnected,
   details,
 }: {
   wallet: Wallet | undefined;
-  isConnected: boolean;
+  // isConnected: boolean;
   details: {
     accountId: string;
     balance: string;
@@ -32,20 +36,29 @@ export const WalletConnectButton = ({
     contractName: string;
   };
 }) => {
+  const {
+    connect,
+    disconnect,
+    activeAccountId,
+    selector,
+    isConnected,
+    errorMessage,
+  } = useWallet();
+
   return (
     <MbButton
       label={
-        isConnected ? `Disconnect ${details.accountId}` : "Connect NEAR wallet"
+        isConnected ? `Disconnect ${activeAccountId}` : "Connect NEAR wallet"
       }
       state={EState.ACTIVE}
       onClick={
         isConnected
           ? () => {
-              wallet?.disconnect();
+              disconnect();
               window.location.reload();
             }
           : () => {
-              wallet?.connect({ requestSignIn: true });
+              connect();
             }
       }
     />
@@ -135,9 +148,33 @@ export default function PuzzletaskMintbaseProvider({
   );
   const [nearContract, setNearContract] = useState<any>(null);
   const { status, data: session } = useSession();
-  const { wallet, isConnected, details } = useWallet();
+  const { wallet, isConnected, details } = useWalletOLD();
   const isSignedIn = status === "authenticated";
 
+  // Set up mintbase sdk
+  useEffect(() => {
+    const config = {
+      network: "testnet",
+      contractAddress: "pztnft02.testnet",
+    };
+    mbjs.config(config);
+    console.log("global keys of all mintbase-js packages", mbjs.keys);
+  }, []);
+
+  // Create contract connection for direct interaction
+  async function handleContractSet() {
+    const contract = await NearContract(wallet);
+    setNearContract(contract);
+  }
+
+  useEffect(() => {
+    if (isConnected) {
+      handleContractSet();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected]);
+
+  // Check account/wallet relation status
   useEffect(() => {
     if (isConnected && userWallet !== null) {
       if ("address" in userWallet && userWallet.address === details.accountId) {
@@ -153,18 +190,6 @@ export default function PuzzletaskMintbaseProvider({
       setUserWalletMatches(UserWalletMatchStates.NO_WALLETS);
     }
   }, [isConnected, userWallet, details.accountId]);
-
-  async function handleContractSet() {
-    const contract = await NearContract(wallet);
-    setNearContract(contract);
-  }
-
-  useEffect(() => {
-    if (isConnected) {
-      handleContractSet();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected]);
 
   async function fetchUserWallet() {
     const response = await fetch(
@@ -182,6 +207,7 @@ export default function PuzzletaskMintbaseProvider({
     setUserWallet(response);
   }
 
+  // Handle local state var userWallet
   useEffect(() => {
     // User logged in
     if (isSignedIn && userWallet === null) {
@@ -236,6 +262,8 @@ export default function PuzzletaskMintbaseProvider({
     return response;
   }, [nearContract, session]);
 
+  const mintNFT = useCallback(async () => {}, []);
+
   function resolveContextValues() {
     const mntbWallet = isConnected
       ? {
@@ -283,7 +311,7 @@ export default function PuzzletaskMintbaseProvider({
           />
           <WalletConnectButton
             wallet={wallet}
-            isConnected={isConnected}
+            // isConnected={isConnected}
             details={details}
           />
         </div>
