@@ -6,8 +6,13 @@ import {
 import styles from "../../styles/Home.module.css";
 
 export default function MintPage() {
-  const { associateWallet, userWalletMatches, getUserNFTs } =
-    usePuzzletaskMintbaseContext();
+  const {
+    associateWallet,
+    userWalletMatches,
+    getUserNFTs,
+    contractReady,
+    mintNFT,
+  } = usePuzzletaskMintbaseContext();
 
   const [userNFTs, setUserNFTs] = useState<any>(null);
 
@@ -17,22 +22,21 @@ export default function MintPage() {
   }, [getUserNFTs]);
 
   useEffect(() => {
-    onLoad();
-  }, [onLoad]);
+    if (contractReady) {
+      onLoad();
+    }
+  }, [onLoad, contractReady]);
 
-  const nftCollection = useMemo(
-    async () => getUserNFTs && (await getUserNFTs()),
-    [getUserNFTs]
-  );
   const actionsEnabled =
-    userWalletMatches === UserWalletMatchStates.USER_WALLET_MATCHES;
+    userWalletMatches === UserWalletMatchStates.USER_WALLET_MATCHES &&
+    contractReady;
 
   function renderPageHeader() {
     let header = null;
     switch (userWalletMatches) {
       case UserWalletMatchStates.USER_WALLET_MATCHES:
         header =
-          userNFTs.length === 0 ? (
+          userNFTs && userNFTs.length === 0 ? (
             <h1 className={styles.description}>
               Press the button to mint your NFT (TODO: Check if there is an NFT)
             </h1>
@@ -80,11 +84,11 @@ export default function MintPage() {
     <div className={styles.container}>
       <main className={styles.main}>
         {renderPageHeader()}
-        {actionsEnabled && (
+        {actionsEnabled && userNFTs && userNFTs.length === 0 && (
           <input
             type="button"
             value="Mint NFT"
-            onClick={() => alert("TODO!")}
+            onClick={() => mintNFT && mintNFT()}
           />
         )}
       </main>

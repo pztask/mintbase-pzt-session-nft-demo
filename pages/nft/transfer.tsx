@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useState } from "react";
 import {
   usePuzzletaskMintbaseContext,
   UserWalletMatchStates,
@@ -5,10 +6,36 @@ import {
 import styles from "../../styles/Home.module.css";
 
 export default function TransferPage() {
-  const { associateWallet, userWalletMatches } = usePuzzletaskMintbaseContext();
+  const {
+    mntbWallet,
+    associateWallet,
+    userWalletMatches,
+    contractReady,
+    getUserNFTs,
+    transferNFT,
+  } = usePuzzletaskMintbaseContext();
+
+  const [userNFTs, setUserNFTs] = useState<any>(null);
+
+  const onLoad = useCallback(async () => {
+    const nfts = getUserNFTs && (await getUserNFTs());
+    setUserNFTs(nfts);
+  }, [getUserNFTs]);
+
+  useEffect(() => {
+    if (contractReady) {
+      onLoad();
+    }
+  }, [onLoad, contractReady]);
+
+  const nftAlreadyInWallet =
+    userNFTs &&
+    userNFTs.length > 0 &&
+    userNFTs[0].owner_id === mntbWallet?.activeAccountId;
 
   const actionsEnabled =
-    userWalletMatches === UserWalletMatchStates.USER_WALLET_MATCHES;
+    userWalletMatches === UserWalletMatchStates.USER_WALLET_MATCHES &&
+    contractReady;
 
   function renderPageHeader() {
     let header = null;
@@ -20,6 +47,22 @@ export default function TransferPage() {
             NFT)
           </h1>
         );
+        if (userNFTs && userNFTs.length > 0) {
+          header =
+            userNFTs[0].owner_id === mntbWallet?.activeAccountId ? (
+              <h1 className={styles.description}>
+                Your NFT is already in this wallet
+              </h1>
+            ) : (
+              <h1 className={styles.description}>
+                Press the button to transfer your NFT to this wallet
+              </h1>
+            );
+        } else {
+          header = (
+            <h1 className={styles.description}>Please mint your NFT first</h1>
+          );
+        }
         break;
       case UserWalletMatchStates.USER_WALLET_NOT_MATCHES:
         header = (
@@ -59,13 +102,16 @@ export default function TransferPage() {
     <div className={styles.container}>
       <main className={styles.main}>
         {renderPageHeader()}
-        {actionsEnabled && (
-          <input
-            type="button"
-            value="Transfer NFT"
-            onClick={() => alert("TODO!")}
-          />
-        )}
+        {actionsEnabled &&
+          userNFTs &&
+          userNFTs.length > 0 &&
+          !nftAlreadyInWallet && (
+            <input
+              type="button"
+              value="Transfer NFT"
+              onClick={() => transferNFT && transferNFT(userNFTs[0].token_id)}
+            />
+          )}
       </main>
     </div>
   );
