@@ -4,6 +4,14 @@ Simple project to demonstrate how to use the mintbase-pzt-session-nft lib.
 
 ## Getting Started
 
+If you want to try the demo just copy the root .env.example file to .env, set it accordingly (see example below) and continue the instrunctions in the [docker directory](docker/README.md).
+
+- DATABASE_URL="file:./dev.db"
+- NEXTAUTH_SECRET="any_secret"
+- AUTH_TRUST_HOST="localhost"
+
+## Running the Development environment
+
 First, run the development server:
 
 ```bash
