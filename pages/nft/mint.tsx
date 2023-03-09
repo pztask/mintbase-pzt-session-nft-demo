@@ -84,7 +84,8 @@ export default function MintPage() {
     <div className={styles.container}>
       <main className={styles.main}>
         {renderPageHeader()}
-        {actionsEnabled && userNFTs && userNFTs.length === 0 && (
+        {/* {actionsEnabled && userNFTs && userNFTs.length === 0 || true && ( */}
+        {true && (
           <input
             type="button"
             value="Mint NFT"

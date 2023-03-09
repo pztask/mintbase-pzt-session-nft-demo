@@ -12,7 +12,14 @@ import { useWallet } from "@mintbase-js/react";
 import { Wallet } from "mintbase";
 import { EState, MbButton } from "mintbase-ui";
 import { SessionProvider, signOut, useSession } from "next-auth/react";
-import { execute, mbjs, mint } from "@mintbase-js/sdk";
+import {
+  execute,
+  mbjs,
+  mint,
+  transfer,
+  MintArgsResponse,
+  NearContractCall,
+} from "@mintbase-js/sdk";
 import { v4 as uuidv4 } from "uuid";
 
 import {
@@ -23,6 +30,8 @@ import { NearContract } from "../../lib/near";
 import styles from "../../styles/Home.module.css";
 
 const GAS = "300000000000000";
+const CONTRACT_ADRESS = "pztnft03.testnet";
+("300000000000000");
 
 // TODO: Review props declaration
 export const WalletConnectButton = ({
@@ -273,55 +282,85 @@ export default function PuzzletaskMintbaseProvider({
   const mintNFT = useCallback(async () => {
     const wallet = await selector.wallet();
 
-    const mintResponse = await wallet
-      .signAndSendTransaction({
-        actions: [
-          {
-            type: "FunctionCall",
-            params: {
-              methodName: "nft_mint",
-              args: {
-                receiver_id: activeAccountId,
-                token_id: uuidv4(),
-                metadata: {
-                  title: "My Non Fungible Team Token 42",
-                  description: "The Team Most Certainly Goes 2:)",
-                  extra: JSON.stringify({
-                    user_id: (session as any)?.user?.id,
-                  }),
-                },
-              },
-              gas: GAS,
-              deposit: "100000000000000000000000",
-            },
-          },
-        ],
-      })
-      .catch((e) => {});
+    // const mintResponse = await wallet
+    //   .signAndSendTransaction({
+    //     actions: [
+    //       {
+    //         type: "FunctionCall",
+    //         params: {
+    //           methodName: "nft_mint",
+    //           args: {
+    //             receiver_id: activeAccountId,
+    //             token_id: uuidv4(),
+    //             metadata: {
+    //               title: "My Non Fungible Team Token 42",
+    //               description: "The Team Most Certainly Goes 2:)",
+    //               extra: JSON.stringify({
+    //                 user_id: (session as any)?.user?.id,
+    //               }),
+    //             },
+    //           },
+    //           gas: GAS,
+    //           deposit: "100000000000000000000000",
+    //         },
+    //       },
+    //     ],
+    //   })
+    //   .catch((e) => {});
+    const mintObj = await mint({
+      contractAddress: CONTRACT_ADRESS,
+      ownerId: activeAccountId ?? "",
+      noMedia: true,
+      noReference: true,
+      metadata: {
+        title: "My Non Fungible Team Token 42",
+        description: "The Team Most Certainly Goes 2:)",
+        extra: JSON.stringify({
+          user_id: (session as any)?.user?.id,
+        }),
+      },
+    });
+    const mintResponse = await execute({ wallet }, {
+      ...mintObj,
+      gas: "300000000000000",
+      deposit: "100000000000000000000000",
+    } as NearContractCall<MintArgsResponse>).catch((e) => {});
   }, [selector, activeAccountId, session]);
 
   const transferNFT = useCallback(
     async (tokenId: string) => {
       const wallet = await selector.wallet();
 
-      const transferResponse = await wallet
-        .signAndSendTransaction({
-          actions: [
-            {
-              type: "FunctionCall",
-              params: {
-                methodName: "nft_transfer",
-                args: {
-                  receiver_id: activeAccountId,
-                  token_id: tokenId,
-                },
-                gas: GAS,
-                deposit: "1",
-              },
-            },
-          ],
-        })
-        .catch((e) => {});
+      // const transferResponse = await wallet
+      //   .signAndSendTransaction({
+      //     actions: [
+      //       {
+      //         type: "FunctionCall",
+      //         params: {
+      //           methodName: "nft_transfer",
+      //           args: {
+      //             receiver_id: activeAccountId,
+      //             token_id: tokenId,
+      //           },
+      //           gas: GAS,
+      //           deposit: "1",
+      //         },
+      //       },
+      //     ],
+      //   })
+      //   .catch((e) => {});
+      const transferObj = await transfer({
+        contractAddress: CONTRACT_ADRESS,
+        transfers: [
+          {
+            receiverId: activeAccountId ?? "",
+            tokenId: tokenId,
+          },
+        ],
+      });
+      const transferResponse = await execute({ wallet }, transferObj).catch(
+        (e) => {}
+      );
     },
     [selector, activeAccountId]
   );
