@@ -13,6 +13,8 @@ export default function MintPage() {
     getUserNFTs,
     contractReady,
     mintNFT,
+    mntbWalletConnected,
+    pztAuthenticated,
   } = usePuzzletaskMintbaseContext();
   const [isLoadingNFTs, setIsLoadingNFTs] = useState(false);
   const [userNFTs, setUserNFTs] = useState<any>(null);
@@ -23,11 +25,11 @@ export default function MintPage() {
   }, [getUserNFTs]);
 
   useEffect(() => {
-    if (contractReady) {
+    if (contractReady && mntbWalletConnected && pztAuthenticated) {
       setIsLoadingNFTs(true);
       onLoad();
     }
-  }, [onLoad, contractReady]);
+  }, [onLoad, contractReady, mntbWalletConnected, pztAuthenticated]);
 
   useEffect(() => {
     if (userNFTs !== null) {

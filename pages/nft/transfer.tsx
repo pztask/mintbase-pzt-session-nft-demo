@@ -18,6 +18,7 @@ export default function TransferPage() {
     pztAuthenticated,
   } = usePuzzletaskMintbaseContext();
 
+  const [isLoadingNFTs, setIsLoadingNFTs] = useState(false);
   const [userNFTs, setUserNFTs] = useState<any>(null);
 
   const onLoad = useCallback(async () => {
@@ -27,9 +28,16 @@ export default function TransferPage() {
 
   useEffect(() => {
     if (contractReady && mntbWalletConnected && pztAuthenticated) {
+      setIsLoadingNFTs(true);
       onLoad();
     }
   }, [onLoad, contractReady, mntbWalletConnected, pztAuthenticated]);
+
+  useEffect(() => {
+    if (userNFTs !== null) {
+      setIsLoadingNFTs(false);
+    }
+  }, [userNFTs]);
 
   const nftAlreadyInWallet =
     userNFTs &&
@@ -104,7 +112,10 @@ export default function TransferPage() {
   return (
     <div className={styles.container}>
       <main className={styles.main}>
-        {userNFTs && userNFTs.length > 0 && <NFTViewer nft={userNFTs[0]} />}
+        {isLoadingNFTs && <p>Loading NFT...</p>}
+        {!isLoadingNFTs && userNFTs && userNFTs.length > 0 && (
+          <NFTViewer nft={userNFTs[0]} />
+        )}
         {renderPageHeader()}
         {actionsEnabled &&
           userNFTs &&

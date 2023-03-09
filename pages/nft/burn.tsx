@@ -1,3 +1,5 @@
+import { useCallback, useEffect, useState } from "react";
+import NFTViewer from "../../components/NFTViewer";
 import {
   usePuzzletaskMintbaseContext,
   UserWalletMatchStates,
@@ -5,7 +7,34 @@ import {
 import styles from "../../styles/Home.module.css";
 
 export default function BurnPage() {
-  const { associateWallet, userWalletMatches } = usePuzzletaskMintbaseContext();
+  const {
+    associateWallet,
+    userWalletMatches,
+    getUserNFTs,
+    contractReady,
+    mntbWalletConnected,
+    pztAuthenticated,
+  } = usePuzzletaskMintbaseContext();
+  const [isLoadingNFTs, setIsLoadingNFTs] = useState(false);
+  const [userNFTs, setUserNFTs] = useState<any>(null);
+
+  const onLoad = useCallback(async () => {
+    const nfts = getUserNFTs && (await getUserNFTs());
+    setUserNFTs(nfts);
+  }, [getUserNFTs]);
+
+  useEffect(() => {
+    if (contractReady && mntbWalletConnected && pztAuthenticated) {
+      setIsLoadingNFTs(true);
+      onLoad();
+    }
+  }, [onLoad, contractReady, mntbWalletConnected, pztAuthenticated]);
+
+  useEffect(() => {
+    if (userNFTs !== null) {
+      setIsLoadingNFTs(false);
+    }
+  }, [userNFTs]);
 
   const actionsEnabled =
     userWalletMatches === UserWalletMatchStates.USER_WALLET_MATCHES;
@@ -14,11 +43,16 @@ export default function BurnPage() {
     let header = null;
     switch (userWalletMatches) {
       case UserWalletMatchStates.USER_WALLET_MATCHES:
-        header = (
-          <h1 className={styles.description}>
-            Press the button to burn your NFT (TODO: Check if there is an NFT)
-          </h1>
-        );
+        header =
+          userNFTs && userNFTs.length === 0 ? (
+            <h1 className={styles.description}>
+              You need to mint an NFT before you can burn it
+            </h1>
+          ) : (
+            <h1 className={styles.description}>
+              Press the button to burn your NFT
+            </h1>
+          );
         break;
       case UserWalletMatchStates.USER_WALLET_NOT_MATCHES:
         header = (
@@ -57,8 +91,12 @@ export default function BurnPage() {
   return (
     <div className={styles.container}>
       <main className={styles.main}>
+        {isLoadingNFTs && <p>Loading NFT...</p>}
+        {!isLoadingNFTs && userNFTs && userNFTs.length > 0 && (
+          <NFTViewer nft={userNFTs[0]} />
+        )}
         {renderPageHeader()}
-        {actionsEnabled && (
+        {actionsEnabled && userNFTs && userNFTs.length > 0 && (
           <input
             type="button"
             value="Burn NFT"
