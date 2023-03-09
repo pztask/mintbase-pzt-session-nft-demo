@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import NFTViewer from "../../components/NFTViewer";
 import {
   usePuzzletaskMintbaseContext,
   UserWalletMatchStates,
@@ -13,7 +14,7 @@ export default function MintPage() {
     contractReady,
     mintNFT,
   } = usePuzzletaskMintbaseContext();
-
+  const [isLoadingNFTs, setIsLoadingNFTs] = useState(false);
   const [userNFTs, setUserNFTs] = useState<any>(null);
 
   const onLoad = useCallback(async () => {
@@ -23,9 +24,16 @@ export default function MintPage() {
 
   useEffect(() => {
     if (contractReady) {
+      setIsLoadingNFTs(true);
       onLoad();
     }
   }, [onLoad, contractReady]);
+
+  useEffect(() => {
+    if (userNFTs !== null) {
+      setIsLoadingNFTs(false);
+    }
+  }, [userNFTs]);
 
   const actionsEnabled =
     userWalletMatches === UserWalletMatchStates.USER_WALLET_MATCHES &&
@@ -83,6 +91,10 @@ export default function MintPage() {
   return (
     <div className={styles.container}>
       <main className={styles.main}>
+        {isLoadingNFTs && <p>Loading NFT...</p>}
+        {!isLoadingNFTs && userNFTs && userNFTs.length > 0 && (
+          <NFTViewer nft={userNFTs[0]} />
+        )}
         {renderPageHeader()}
         {/* {actionsEnabled && userNFTs && userNFTs.length === 0 || true && ( */}
         {true && (

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import NFTViewer from "../../components/NFTViewer";
 import {
   usePuzzletaskMintbaseContext,
   UserWalletMatchStates,
@@ -13,6 +14,8 @@ export default function TransferPage() {
     contractReady,
     getUserNFTs,
     transferNFT,
+    mntbWalletConnected,
+    pztAuthenticated,
   } = usePuzzletaskMintbaseContext();
 
   const [userNFTs, setUserNFTs] = useState<any>(null);
@@ -23,10 +26,10 @@ export default function TransferPage() {
   }, [getUserNFTs]);
 
   useEffect(() => {
-    if (contractReady) {
+    if (contractReady && mntbWalletConnected && pztAuthenticated) {
       onLoad();
     }
-  }, [onLoad, contractReady]);
+  }, [onLoad, contractReady, mntbWalletConnected, pztAuthenticated]);
 
   const nftAlreadyInWallet =
     userNFTs &&
@@ -101,6 +104,7 @@ export default function TransferPage() {
   return (
     <div className={styles.container}>
       <main className={styles.main}>
+        {userNFTs && userNFTs.length > 0 && <NFTViewer nft={userNFTs[0]} />}
         {renderPageHeader()}
         {actionsEnabled &&
           userNFTs &&
