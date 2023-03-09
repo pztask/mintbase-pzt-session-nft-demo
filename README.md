@@ -2,6 +2,12 @@
 
 Simple project to demonstrate how to use the mintbase-pzt-session-nft lib.
 
+## Disclaimers
+
+### Why we didn't use the @mintbase-js/sdk?
+
+Through out the project we ended up not using the `@mintbase-js/sdk` to make our contract calls on the frontend and on the bot. This is mainly because the default `mint` and `transfer` functions available on the `@mintbase-js/sdk` do not allow changing its parameters. This is limiting the ability to call our contract mint and transfer functions because they spent more gas than the standard (we are using more cpu time and storage) and we can't, for example, change the gas and fee used needed for the transaction.
+
 ## Getting Started
 
 If you want to try the demo just copy the root .env.example file to .env, set it accordingly (see example below) and continue the instrunctions in the [docker directory](docker/README.md).
