@@ -1,4 +1,4 @@
-import { Prisma, Wallet } from "@prisma/client";
+import { Prisma, User, Wallet } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import prisma from "../../../../prisma/client";
@@ -21,6 +21,20 @@ async function getUser(userId: string | string[] | undefined) {
     return user;
   } else {
     return null;
+  }
+}
+
+async function deleteWallet(
+  user: User & {
+    wallet: Wallet | null;
+  }
+) {
+  if (user.wallet) {
+    await prisma.wallet.delete({
+      where: {
+        userId: user.id,
+      },
+    });
   }
 }
 
@@ -49,11 +63,9 @@ export async function handler(
           userId: user.id,
         });
         try {
-          await prisma.wallet.delete({
-            where: {
-              userId: user.id,
-            },
-          });
+          // TODO: Check if wallet exists first!
+          await deleteWallet(user);
+
           await prisma.wallet.upsert({
             where: {
               address: (typeof req.body === "string"
