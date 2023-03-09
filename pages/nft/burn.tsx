@@ -14,6 +14,7 @@ export default function BurnPage() {
     contractReady,
     mntbWalletConnected,
     pztAuthenticated,
+    burnNFT,
   } = usePuzzletaskMintbaseContext();
   const [isLoadingNFTs, setIsLoadingNFTs] = useState(false);
   const [userNFTs, setUserNFTs] = useState<any>(null);
@@ -100,7 +101,7 @@ export default function BurnPage() {
           <input
             type="button"
             value="Burn NFT"
-            onClick={() => alert("TODO!")}
+            onClick={() => burnNFT && burnNFT(userNFTs[0].token_id)}
           />
         )}
       </main>

@@ -19,6 +19,7 @@ import {
   transfer,
   MintArgsResponse,
   NearContractCall,
+  burn,
 } from "@mintbase-js/sdk";
 import { v4 as uuidv4 } from "uuid";
 
@@ -125,6 +126,7 @@ interface PztMntbConsumer {
   getUserNFTs?: () => Promise<Array<any>>;
   mintNFT?: () => Promise<void>;
   transferNFT?: (tokenId: string) => Promise<void>;
+  burnNFT?: (tokenId: string) => Promise<void>;
 }
 
 export const PztMntbContext = createContext<PztMntbConsumer>({
@@ -365,6 +367,19 @@ export default function PuzzletaskMintbaseProvider({
     [selector, activeAccountId]
   );
 
+  const burnNFT = useCallback(
+    async (tokenId: string) => {
+      const wallet = await selector.wallet();
+
+      const burnObj = await burn({
+        contractAddress: CONTRACT_ADRESS,
+        tokenIds: [tokenId],
+      });
+      const burnResponse = await execute({ wallet }, burnObj).catch((e) => {});
+    },
+    [selector]
+  );
+
   function resolveContextValues() {
     const mntbWallet = isConnected
       ? {
@@ -394,6 +409,7 @@ export default function PuzzletaskMintbaseProvider({
       getUserNFTs: getUserNFTs,
       mintNFT: mintNFT,
       transferNFT: transferNFT,
+      burnNFT: burnNFT,
       contractReady: nearContract !== null,
     };
   }
