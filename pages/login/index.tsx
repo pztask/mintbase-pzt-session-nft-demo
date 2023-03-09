@@ -10,17 +10,13 @@ export default function LogInPage() {
   const [passwordText, setPasswordText] = useState("");
 
   function renderAlreadyAuthenticated() {
-    return (
-      <h1 className={styles.description}>You are already authenticated</h1>
-    );
+    return <h1 className={styles.description}>You are already logged in</h1>;
   }
 
   function renderLogInForm() {
     return (
       <>
-        <h1 className={styles.description}>
-          Please login and connect your wallet.
-        </h1>
+        <h1 className={styles.description}>Please fill in your credentials</h1>
 
         <div className={styles.grid}>
           <div className={styles["login-card"]}>
