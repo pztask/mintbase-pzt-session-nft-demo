@@ -21,7 +21,7 @@ import {
   mintUserBoundNft,
   permitRequest,
   transferUserBoundNFT,
-} from "../../lib/PuzzletaskHelpers";
+} from "../../lib/puzzletaskHelpers";
 
 const CONTRACT_ADRESS = "pztnft03.testnet";
 
