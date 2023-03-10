@@ -7,9 +7,13 @@ import { checkPass } from "../../../utils/password-hash";
 export async function checkCredentials(credentials: any) {
   // Add logic here to look up the user from the credentials supplied
   if (credentials) {
-    const user = await prisma.user.findUnique({
-      where: { email: credentials.email },
-    });
+    const user = await prisma.user
+      .findUnique({
+        where: { email: credentials.email },
+      })
+      .catch((e) => {
+        return null;
+      });
 
     if (user) {
       // Any object returned will be saved in `user` property of the JWT
@@ -20,7 +24,6 @@ export async function checkCredentials(credentials: any) {
 
       if (hasCorrectPassword) {
         // FIXME: https://github.com/nextauthjs/next-auth/issues/2709
-        console.log(user);
         return { id: user.id, email: user.email } as any;
       }
     }

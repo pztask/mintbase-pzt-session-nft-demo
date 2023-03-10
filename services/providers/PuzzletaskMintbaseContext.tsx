@@ -9,30 +9,21 @@ import {
 } from "react";
 import { useRouter } from "next/router";
 import { useWallet } from "@mintbase-js/react";
-import { Wallet } from "mintbase";
 import { EState, MbButton } from "mintbase-ui";
-import { SessionProvider, signOut, useSession } from "next-auth/react";
-import {
-  execute,
-  mbjs,
-  mint,
-  transfer,
-  MintArgsResponse,
-  NearContractCall,
-  burn,
-} from "@mintbase-js/sdk";
-import { v4 as uuidv4 } from "uuid";
+import { signOut, useSession } from "next-auth/react";
+import { execute, mbjs, burn } from "@mintbase-js/sdk";
 
-import {
-  WalletProvider,
-  useWallet as useWalletOLD,
-} from "./MintbaseWalletContext";
 import { NearContract } from "../../lib/near";
 import styles from "../../styles/Home.module.css";
+import {
+  burnUserBoundNFT,
+  getUserNFTs as pztGetUserNFTs,
+  mintUserBoundNft,
+  permitRequest,
+  transferUserBoundNFT,
+} from "../../lib/PuzzletaskHelpers";
 
-const GAS = "300000000000000";
 const CONTRACT_ADRESS = "pztnft03.testnet";
-("300000000000000");
 
 // TODO: Review props declaration
 export const WalletConnectButton = ({
@@ -250,21 +241,16 @@ export default function PuzzletaskMintbaseProvider({
       // Request permit to contract
 
       const wallet = await selector.wallet();
-      const permitResponse = await wallet
-        .signAndSendTransaction({
-          actions: [
-            {
-              type: "FunctionCall",
-              params: {
-                methodName: "permit_request",
-                args: { user_id: (session as any)?.user?.id },
-                gas: GAS,
-                deposit: "100000000000000000000000",
-              },
-            },
-          ],
-        })
-        .catch((e) => {});
+      const userId = (session as any)?.user?.id;
+      const permitRequestCall = permitRequest({
+        contractAddress: CONTRACT_ADRESS,
+        userId: userId,
+      });
+      const permitResponse = await execute({ wallet }, permitRequestCall).catch(
+        (e) => {
+          console.log(e);
+        }
+      );
       // TODO: verify if request_permit was successful
     } else {
       // TODO: Error handling
@@ -273,96 +259,41 @@ export default function PuzzletaskMintbaseProvider({
   }, [session, activeAccountId, nearContract]);
 
   const getUserNFTs = useCallback(async () => {
-    const response = await nearContract.nft_tokens_for_user({
-      user_id: (session as any)?.user?.id,
+    return await pztGetUserNFTs({
+      nearContract: nearContract,
+      userId: (session as any)?.user?.id,
     });
-    // TODO: verify if nft_view was successful
-
-    return response;
   }, [nearContract, session]);
 
   const mintNFT = useCallback(async () => {
     const wallet = await selector.wallet();
-
-    // const mintResponse = await wallet
-    //   .signAndSendTransaction({
-    //     actions: [
-    //       {
-    //         type: "FunctionCall",
-    //         params: {
-    //           methodName: "nft_mint",
-    //           args: {
-    //             receiver_id: activeAccountId,
-    //             token_id: uuidv4(),
-    //             metadata: {
-    //               title: "My Non Fungible Team Token 42",
-    //               description: "The Team Most Certainly Goes 2:)",
-    //               extra: JSON.stringify({
-    //                 user_id: (session as any)?.user?.id,
-    //               }),
-    //             },
-    //           },
-    //           gas: GAS,
-    //           deposit: "100000000000000000000000",
-    //         },
-    //       },
-    //     ],
-    //   })
-    //   .catch((e) => {});
-    const mintObj = await mint({
+    const mintCall = mintUserBoundNft({
       contractAddress: CONTRACT_ADRESS,
-      ownerId: activeAccountId ?? "",
-      noMedia: true,
-      noReference: true,
+      receiverId: activeAccountId ?? "",
       metadata: {
-        title: "My Non Fungible Team Token 42",
-        description: "The Team Most Certainly Goes 2:)",
+        title: "PZT Token " + new Date(),
+        description: "I'm a PZT User Bound Token.",
         extra: JSON.stringify({
           user_id: (session as any)?.user?.id,
         }),
       },
     });
-    const mintResponse = await execute({ wallet }, {
-      ...mintObj,
-      gas: "300000000000000",
-      deposit: "100000000000000000000000",
-    } as NearContractCall<MintArgsResponse>).catch((e) => {});
+    await execute({ wallet }, mintCall).catch((e) => {
+      alert(e);
+    });
   }, [selector, activeAccountId, session]);
 
   const transferNFT = useCallback(
     async (tokenId: string) => {
       const wallet = await selector.wallet();
-
-      // const transferResponse = await wallet
-      //   .signAndSendTransaction({
-      //     actions: [
-      //       {
-      //         type: "FunctionCall",
-      //         params: {
-      //           methodName: "nft_transfer",
-      //           args: {
-      //             receiver_id: activeAccountId,
-      //             token_id: tokenId,
-      //           },
-      //           gas: GAS,
-      //           deposit: "1",
-      //         },
-      //       },
-      //     ],
-      //   })
-      //   .catch((e) => {});
-      const transferObj = await transfer({
+      const transferCall = transferUserBoundNFT({
         contractAddress: CONTRACT_ADRESS,
-        transfers: [
-          {
-            receiverId: activeAccountId ?? "",
-            tokenId: tokenId,
-          },
-        ],
+        receiverId: activeAccountId ?? "",
+        tokenId: tokenId,
       });
-      const transferResponse = await execute({ wallet }, transferObj).catch(
-        (e) => {}
-      );
+      await execute({ wallet }, transferCall).catch((e) => {
+        alert(e);
+      });
     },
     [selector, activeAccountId]
   );
@@ -370,12 +301,13 @@ export default function PuzzletaskMintbaseProvider({
   const burnNFT = useCallback(
     async (tokenId: string) => {
       const wallet = await selector.wallet();
-
-      const burnObj = await burn({
+      const burnCall = burnUserBoundNFT({
         contractAddress: CONTRACT_ADRESS,
-        tokenIds: [tokenId],
+        tokenId: tokenId,
       });
-      const burnResponse = await execute({ wallet }, burnObj).catch((e) => {});
+      await execute({ wallet }, burnCall).catch((e) => {
+        alert(e);
+      });
     },
     [selector]
   );
@@ -417,7 +349,7 @@ export default function PuzzletaskMintbaseProvider({
   const contextValues = useMemo(
     () => resolveContextValues(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isConnected, isSignedIn, session, userWalletMatches]
+    [isConnected, isSignedIn, session, userWalletMatches, nearContract]
   );
 
   return (
