@@ -18,7 +18,7 @@ import styles from "../../styles/Home.module.css";
 import {
   burnUserBoundNFT,
   getUserNFTs as pztGetUserNFTs,
-  mintUserBoundNft,
+  mintUserBoundNFT,
   permitRequest,
   transferUserBoundNFT,
 } from "../../lib/puzzletaskHelpers";
@@ -267,15 +267,13 @@ export default function PuzzletaskMintbaseProvider({
 
   const mintNFT = useCallback(async () => {
     const wallet = await selector.wallet();
-    const mintCall = mintUserBoundNft({
+    const mintCall = mintUserBoundNFT({
       contractAddress: CONTRACT_ADRESS,
       receiverId: activeAccountId ?? "",
+      userId: (session as any)?.user?.id,
       metadata: {
         title: "PZT Token " + new Date(),
         description: "I'm a PZT User Bound Token.",
-        extra: JSON.stringify({
-          user_id: (session as any)?.user?.id,
-        }),
       },
     });
     await execute({ wallet }, mintCall).catch((e) => {

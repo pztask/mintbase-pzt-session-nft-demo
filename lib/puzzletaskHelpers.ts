@@ -15,6 +15,7 @@ type mintUserBoundNFTArgs = {
   contractAddress: string;
   receiverId: string;
   metadata: TokenMetadata;
+  userId: string;
 };
 
 type mintUserBoundNFTArgsResponse = {
@@ -73,10 +74,13 @@ function mintingDeposit({ metadata }: { metadata: TokenMetadata }): string {
   )}`;
 }
 
-export const mintUserBoundNft = function (
+export const mintUserBoundNFT = function (
   args: mintUserBoundNFTArgs
 ): NearContractCall<mintUserBoundNFTArgsResponse> {
-  const { contractAddress, receiverId, metadata } = args;
+  const { contractAddress, receiverId, metadata, userId } = args;
+  metadata["extra"] = JSON.stringify({
+    user_id: userId,
+  });
   return {
     contractAddress: contractAddress,
     args: {
