@@ -8,7 +8,7 @@ export default function NFTViewer({ nft }: any) {
       }}
     >
       <p>
-        <b>Your nft</b>
+        <b>Your NFT</b>
       </p>
       <p>Token Id: {nft.token_id}</p>
       <p>Title: {nft.metadata.title}</p>

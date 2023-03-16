@@ -13,9 +13,7 @@ export default function Header() {
   return (
     <header className={styles["header"]}>
       <Link className={styles["header-title"]} href="/">
-        Puzzletask + Mintbase
-        <br />
-        User Session NFT
+        Puzzletask + Mintbase / User Session NFT
       </Link>
       <div className={styles["header-card"]}>
         <SignInButton

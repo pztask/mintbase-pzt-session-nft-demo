@@ -23,7 +23,7 @@ import {
   transferUserBoundNFT,
 } from "../../lib/puzzletaskHelpers";
 
-const CONTRACT_ADRESS = "pztnft03.testnet";
+const CONTRACT_ADRESS = process.env.CONTRACT_ADDRESS ?? "";
 
 // TODO: Review props declaration
 export function WalletConnectButton(/* {
@@ -160,7 +160,7 @@ export default function PuzzletaskMintbaseProvider({
   useEffect(() => {
     const config = {
       network: "testnet",
-      contractAddress: "pztnft03.testnet",
+      contractAddress: CONTRACT_ADRESS,
     };
     mbjs.config(config);
     console.log("global keys of all mintbase-js packages", mbjs.keys);
@@ -279,7 +279,7 @@ export default function PuzzletaskMintbaseProvider({
       receiverId: activeAccountId ?? "",
       userId: (session as any)?.user?.id,
       metadata: {
-        title: "PZT Token " + new Date(),
+        title: "PZT Token " + new Date().toLocaleString("en-US"),
         description: "I'm a PZT User Bound Token.",
       },
     });

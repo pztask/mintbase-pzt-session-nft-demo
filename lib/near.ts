@@ -1,8 +1,8 @@
 import { connect, Contract, keyStores } from "near-api-js";
 import { Network } from "mintbase";
 
-const NEAR_RPC_URL = "https://rpc.testnet.near.org";
-const CONTRACT_ADDRESS = "pztnft03.testnet";
+const NEAR_RPC_URL = process.env.NEAR_RPC_URL ?? "";
+const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS ?? "";
 
 export async function NearContract(
   accountId: string | null

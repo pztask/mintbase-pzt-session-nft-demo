@@ -46,10 +46,6 @@
   align-items: center;
 }
 
-.main h1 {
-  width: 60%;
-}
-
 .footer {
   display: flex;
   flex: 1;
@@ -92,6 +88,11 @@
   margin: 4rem 0;
   line-height: 1.5;
   font-size: 2.5rem;
+  width: 60%;
+}
+
+.description p {
+  margin-bottom: 1rem;
 }
 
 .code {
@@ -161,7 +162,7 @@
 }
 
 .login-form input {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   margin-left: 1rem;
   border: 1px solid #eaeaea;
   /* border-radius: 10px; */

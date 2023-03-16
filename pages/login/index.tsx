@@ -41,8 +41,8 @@ export default function LogInPage() {
                 />
               </label>
               <MbButton
-                style={{ width: "100%" }}
-                label="Link Wallet"
+                style={{ width: "100%", height: "4rem" }}
+                label="Submit"
                 size={ESize.BIG}
                 state={EState.ACTIVE}
                 onClick={() =>

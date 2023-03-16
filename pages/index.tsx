@@ -20,6 +20,9 @@ export default function Home() {
     getUserNFTs,
     contractReady,
     mintNFT,
+    transferNFT,
+    burnNFT,
+    mntbWallet,
     mntbWalletConnected,
     pztAuthenticated,
   } = usePuzzletaskMintbaseContext();
@@ -46,33 +49,65 @@ export default function Home() {
 
   const actionsEnabled =
     userWalletMatches === UserWalletMatchStates.USER_WALLET_MATCHES;
+  const nftAlreadyInWallet =
+    userNFTs &&
+    userNFTs.length > 0 &&
+    userNFTs[0].owner_id === mntbWallet?.activeAccountId;
+
+  const mintEnabled = actionsEnabled && userNFTs && userNFTs.length === 0;
+  const transferEnabled =
+    actionsEnabled && userNFTs && userNFTs.length > 0 && !nftAlreadyInWallet;
+  const burnEnabled =
+    actionsEnabled && userNFTs && userNFTs.length > 0 && nftAlreadyInWallet;
 
   function renderPageHeader() {
     let header = null;
     switch (userWalletMatches) {
       case UserWalletMatchStates.USER_WALLET_MATCHES:
-        header = (
-          <h1 className={styles.description}>
-            You are ready to perform actions.
-          </h1>
-        );
+        if (mintEnabled) {
+          header = (
+            <h1 className={styles.description}>You can now mint your nft.</h1>
+          );
+        } else if (transferEnabled) {
+          header = (
+            <h1 className={styles.description}>
+              Your NFT is not in this wallet. <br /> You can get it back it by
+              pressing the transfer button.
+            </h1>
+          );
+        } else {
+          header = (
+            <h1 className={styles.description}>
+              Your NFT is in this wallet. <br /> You can now burn it, if you
+              want to.
+            </h1>
+          );
+        }
         break;
       case UserWalletMatchStates.USER_WALLET_NOT_MATCHES:
         header = (
           <>
-            <h1 className={styles.description}>
-              The User Session NFT belongs to your account and can be minted,
-              transfered or burnt during this session. <br />
-              This wallet is not linked to your account. In order to perform
-              actions you need to link the wallet that will hold the NFT.
-              <br />
-              Linking a wallet will have a fixed cost that will be used to
-              maintain our verification process.
-              <br />
-              Do yo want to link this wallet?
+            <h1 className={styles.description} style={{ fontSize: "1.75rem" }}>
+              <p>
+                The User Session NFT belongs to your account and can be minted,
+                transfered or burnt during this session.
+              </p>
+              <p>
+                This wallet is not linked to your account.
+                <br />
+                In order to perform actions you need to link the wallet that
+                will hold the NFT.
+              </p>
+              <p>
+                Linking a wallet will have a fixed cost that will be used to
+                maintain our verification process.
+              </p>
+              <p className={styles.description} style={{ width: "100%" }}>
+                Do you want to link this wallet?
+              </p>
             </h1>
             <MbButton
-              style={{ width: "15rem" }}
+              style={{ width: "15rem", height: "4rem" }}
               label="Link Wallet"
               size={ESize.BIG}
               state={EState.ACTIVE}
@@ -84,22 +119,21 @@ export default function Home() {
       case UserWalletMatchStates.NO_USER_WALLET:
         header = (
           <h1 className={styles.description}>
-            Please login <br /> using the upper right controls.
+            Please login using the upper right controls.
           </h1>
         );
         break;
       case UserWalletMatchStates.NO_MNTB_WALLET:
         header = (
           <h1 className={styles.description}>
-            Please connect your wallet <br /> using the upper right controls.
+            Please connect your wallet using the upper right controls.
           </h1>
         );
         break;
       default:
         header = (
           <h1 className={styles.description}>
-            Please login and connect your wallet <br /> using the upper right
-            controls.
+            Please login and connect your wallet using the upper right controls.
           </h1>
         );
     }
@@ -134,25 +168,25 @@ export default function Home() {
 
         <div className={styles.grid} style={{ marginTop: "4rem" }}>
           <MbButton
-            style={{ marginRight: "1rem", width: "15rem" }}
+            style={{ marginRight: "1rem", width: "15rem", height: "4rem" }}
             label="Mint NFT"
             size={ESize.BIG}
-            state={actionsEnabled ? EState.ACTIVE : EState.DISABLED}
-            onClick={() => router.push("/nft/mint")}
+            state={mintEnabled ? EState.ACTIVE : EState.DISABLED}
+            onClick={() => mintNFT && mintNFT()}
           />
           <MbButton
-            style={{ marginRight: "1rem", width: "15rem" }}
+            style={{ marginRight: "1rem", width: "15rem", height: "4rem" }}
             label="Transfer NFT"
             size={ESize.BIG}
-            state={actionsEnabled ? EState.ACTIVE : EState.DISABLED}
-            onClick={() => router.push("/nft/transfer")}
+            state={transferEnabled ? EState.ACTIVE : EState.DISABLED}
+            onClick={() => transferNFT && transferNFT(userNFTs[0].token_id)}
           />
           <MbButton
-            style={{ width: "15rem" }}
+            style={{ width: "15rem", height: "4rem" }}
             label="Burn NFT"
             size={ESize.BIG}
-            state={actionsEnabled ? EState.ACTIVE : EState.DISABLED}
-            onClick={() => router.push("/nft/burn")}
+            state={burnEnabled ? EState.ACTIVE : EState.DISABLED}
+            onClick={() => burnNFT && burnNFT(userNFTs[0].token_id)}
           />
         </div>
       </main>
