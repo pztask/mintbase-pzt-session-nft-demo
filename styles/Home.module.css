@@ -5,8 +5,35 @@
 .header {
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   padding: 1rem 0;
+}
+
+.header-title {
+  margin-left: 2rem;
+}
+
+.header-card {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 1rem;
+  padding: 1.5rem;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  width: 45rem;
+}
+
+.header-card:hover,
+.header-card:focus,
+.header-card:active {
+  color: #0070f3;
+  border-color: #0070f3;
 }
 
 .main {
@@ -17,6 +44,11 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.main h1 {
+  font-size: 2.5rem;
+  width: 60%;
 }
 
 .footer {
@@ -111,27 +143,6 @@
   line-height: 1.5;
 }
 
-.header-card {
-  display: flex;
-  flex-direction: row;
-  margin: 1rem;
-  padding: 1.5rem;
-  text-align: left;
-  color: inherit;
-  text-decoration: none;
-  border: 1px solid #eaeaea;
-  border-radius: 10px;
-  transition: color 0.15s ease, border-color 0.15s ease;
-  max-width: 500px;
-}
-
-.header-card:hover,
-.header-card:focus,
-.header-card:active {
-  color: #0070f3;
-  border-color: #0070f3;
-}
-
 .login-card {
   margin: 1rem;
   padding: 1.5rem;
@@ -147,12 +158,21 @@
 .login-form {
   display: flex;
   flex-flow: column;
+  font-size: 16px;
 }
 
 .login-form input {
   margin-bottom: 1rem;
   margin-left: 1rem;
+  border: 1px solid #eaeaea;
+  /* border-radius: 10px; */
+  width: 100%;
 }
+
+.login-form label {
+  display: flex;
+}
+
 
 .logo {
   height: 1em;

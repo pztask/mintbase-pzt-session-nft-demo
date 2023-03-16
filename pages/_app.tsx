@@ -7,6 +7,8 @@ import "@near-wallet-selector/modal-ui/styles.css";
 import PuzzletaskMintbaseContext from "../services/providers/PuzzletaskMintbaseContext";
 
 import "../styles/globals.css";
+import styles from "../styles/Home.module.css";
+import Header from "../components/Header";
 
 export default function App({
   Component,
@@ -16,7 +18,10 @@ export default function App({
     <SessionProvider session={session}>
       <WalletContextProvider>
         <PuzzletaskMintbaseContext>
-          <Component {...pageProps} />
+          <>
+            <Header />
+            <Component {...pageProps} />
+          </>
         </PuzzletaskMintbaseContext>
       </WalletContextProvider>
     </SessionProvider>

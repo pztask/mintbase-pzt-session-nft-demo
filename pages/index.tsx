@@ -1,3 +1,4 @@
+import { EState, MbButton, ESize } from "mintbase-ui";
 import Head from "next/head";
 import Image from "next/image";
 
@@ -7,8 +8,10 @@ import {
 } from "../services/providers/PuzzletaskMintbaseContext";
 import LinkWDisable from "../components/LinkWDisable";
 import styles from "../styles/Home.module.css";
+import { useRouter } from "next/router";
 
 export default function Home() {
+  const router = useRouter();
   const { pztAuthenticated, associateWallet, userWalletMatches } =
     usePuzzletaskMintbaseContext();
 
@@ -29,29 +32,45 @@ export default function Home() {
         header = (
           <>
             <h1 className={styles.description}>
-              Your near wallet does not match the wallet associated with your
-              account. Associate this wallet?
+              The User Session NFT belongs to your account and can be minted,
+              transfered or burnt during this session. <br />
+              This wallet is not linked to your account. In order to perform
+              actions you need to link the wallet that will hold the NFT.
+              <br />
+              Linking a wallet will have a fixed cost that will be used to
+              maintain our verification process.
+              <br />
+              Do yo want to link this wallet?
             </h1>
-            <input
-              type="button"
-              value="Associate Wallet"
+            <MbButton
+              style={{ width: "15rem" }}
+              label="Link Wallet"
+              size={ESize.BIG}
+              state={EState.ACTIVE}
               onClick={() => associateWallet && associateWallet()}
             />
           </>
         );
         break;
       case UserWalletMatchStates.NO_USER_WALLET:
-        header = <h1 className={styles.description}>Please login.</h1>;
+        header = (
+          <h1 className={styles.description}>
+            Please login <br /> using the upper right controls.
+          </h1>
+        );
         break;
       case UserWalletMatchStates.NO_MNTB_WALLET:
         header = (
-          <h1 className={styles.description}>Please connect your wallet.</h1>
+          <h1 className={styles.description}>
+            Please connect your wallet <br /> using the upper right controls.
+          </h1>
         );
         break;
       default:
         header = (
           <h1 className={styles.description}>
-            Please login and connect your wallet.
+            Please login and connect your wallet <br /> using the upper right
+            controls.
           </h1>
         );
     }
@@ -68,19 +87,39 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Welcome to the demo!</h1>
+        {/* <h1 className={styles.title}>Welcome to the demo!</h1> */}
 
         {renderPageHeader()}
 
         <div className={styles.grid}>
-          <LinkWDisable
+          <MbButton
+            style={{ marginRight: "1rem", width: "15rem" }}
+            label="Mint NFT"
+            size={ESize.BIG}
+            state={actionsEnabled ? EState.ACTIVE : EState.DISABLED}
+            onClick={() => router.push("/nft/mint")}
+          />
+          <MbButton
+            style={{ marginRight: "1rem", width: "15rem" }}
+            label="Transfer NFT"
+            size={ESize.BIG}
+            state={actionsEnabled ? EState.ACTIVE : EState.DISABLED}
+            onClick={() => router.push("/nft/transfer")}
+          />
+          <MbButton
+            style={{ width: "15rem" }}
+            label="Burn NFT"
+            size={ESize.BIG}
+            state={actionsEnabled ? EState.ACTIVE : EState.DISABLED}
+            onClick={() => router.push("/nft/burn")}
+          />
+          {/* <LinkWDisable
             disabled={!actionsEnabled}
             enabledHref={"/nft/mint"}
             enabledClassName={styles.card}
             disabledClassName={styles.card}
           >
             <h2>Mint NFT &rarr;</h2>
-            <p>WIP</p>
           </LinkWDisable>
           <LinkWDisable
             disabled={!actionsEnabled}
@@ -89,7 +128,6 @@ export default function Home() {
             disabledClassName={styles.card}
           >
             <h2>Transfer NFT &rarr;</h2>
-            <p>WIP</p>
           </LinkWDisable>
           <LinkWDisable
             disabled={!actionsEnabled}
@@ -98,17 +136,7 @@ export default function Home() {
             disabledClassName={styles.card}
           >
             <h2>Burn NFT &rarr;</h2>
-            <p>WIP</p>
-          </LinkWDisable>
-          <LinkWDisable
-            disabled={pztAuthenticated}
-            enabledHref={"/login"}
-            enabledClassName={styles.card}
-            disabledClassName={styles.card}
-          >
-            <h2>Log In &rarr;</h2>
-            <p>WIP</p>
-          </LinkWDisable>
+          </LinkWDisable> */}
         </div>
       </main>
 

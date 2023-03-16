@@ -1,3 +1,4 @@
+import { EState, MbButton, ESize } from "mintbase-ui";
 import { useState } from "react";
 import Head from "next/head";
 import { useSession, signIn } from "next-auth/react";
@@ -39,9 +40,11 @@ export default function LogInPage() {
                   onChange={(e) => setPasswordText(e.target.value)}
                 />
               </label>
-              <input
-                type="button"
-                value="Submit"
+              <MbButton
+                style={{ width: "100%" }}
+                label="Link Wallet"
+                size={ESize.BIG}
+                state={EState.ACTIVE}
                 onClick={() =>
                   signIn("credentials", {
                     email: emailText,

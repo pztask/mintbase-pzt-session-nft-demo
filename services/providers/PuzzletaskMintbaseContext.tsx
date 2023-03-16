@@ -9,7 +9,7 @@ import {
 } from "react";
 import { useRouter } from "next/router";
 import { useWallet } from "@mintbase-js/react";
-import { EState, MbButton } from "mintbase-ui";
+import { EState, MbButton, ESize } from "mintbase-ui";
 import { signOut, useSession } from "next-auth/react";
 import { execute, mbjs, burn } from "@mintbase-js/sdk";
 
@@ -26,7 +26,7 @@ import {
 const CONTRACT_ADRESS = "pztnft03.testnet";
 
 // TODO: Review props declaration
-export const WalletConnectButton = ({
+export function WalletConnectButton(/* {
   isConnected,
   connect,
   disconnect,
@@ -36,12 +36,16 @@ export const WalletConnectButton = ({
   connect: () => void;
   disconnect: () => void;
   activeAccountId: string | null;
-}) => {
+} */) {
+  const { connect, disconnect, activeAccountId, isConnected } = useWallet();
+
   return (
     <MbButton
+      style={{ height: "4rem", width: "20rem" }}
       label={
         isConnected ? `Disconnect ${activeAccountId}` : "Connect NEAR wallet"
       }
+      size={ESize.BIG}
       state={EState.ACTIVE}
       onClick={
         isConnected
@@ -55,26 +59,29 @@ export const WalletConnectButton = ({
       }
     />
   );
-};
+}
 
-export const SignInButton = ({
+export function SignInButton(/* {
   isSignedIn,
   email,
 }: {
   isSignedIn: boolean;
   email: string;
-}) => {
+} */) {
+  const { status, data: session } = useSession();
   const router = useRouter();
+  const isSignedIn = status === "authenticated";
 
   return (
     <MbButton
-      style={{}}
-      label={isSignedIn ? `Log out ${email}` : "Log in"}
+      style={{ height: "4rem", width: "20rem", marginRight: "1rem" }}
+      label={isSignedIn ? `Log out ${session?.user?.email ?? ""}` : "Log in"}
       state={EState.ACTIVE}
+      size={ESize.BIG}
       onClick={isSignedIn ? () => signOut() : () => router.push("/login")}
     />
   );
-};
+}
 
 interface PzMntbProviderProps {
   children?: ReactNode;
@@ -352,7 +359,7 @@ export default function PuzzletaskMintbaseProvider({
 
   return (
     <PztMntbContext.Provider value={contextValues}>
-      <header className={styles.header}>
+      {/* <header className={styles["header-actions"]}>
         <div className={styles["header-card"]}>
           <SignInButton
             isSignedIn={isSignedIn}
@@ -365,7 +372,7 @@ export default function PuzzletaskMintbaseProvider({
             activeAccountId={activeAccountId}
           />
         </div>
-      </header>
+      </header> */}
       {children}
     </PztMntbContext.Provider>
   );
