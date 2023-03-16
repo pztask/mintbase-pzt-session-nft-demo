@@ -1,19 +1,48 @@
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { EState, MbButton, ESize } from "mintbase-ui";
 import Head from "next/head";
 import Image from "next/image";
 
+import NFTViewer from "../components/NFTViewer";
 import {
   usePuzzletaskMintbaseContext,
   UserWalletMatchStates,
 } from "../services/providers/PuzzletaskMintbaseContext";
 import LinkWDisable from "../components/LinkWDisable";
 import styles from "../styles/Home.module.css";
-import { useRouter } from "next/router";
 
 export default function Home() {
   const router = useRouter();
-  const { pztAuthenticated, associateWallet, userWalletMatches } =
-    usePuzzletaskMintbaseContext();
+  const {
+    associateWallet,
+    userWalletMatches,
+    getUserNFTs,
+    contractReady,
+    mintNFT,
+    mntbWalletConnected,
+    pztAuthenticated,
+  } = usePuzzletaskMintbaseContext();
+  const [isLoadingNFTs, setIsLoadingNFTs] = useState(false);
+  const [userNFTs, setUserNFTs] = useState<any>(null);
+
+  const onLoad = useCallback(async () => {
+    const nfts = getUserNFTs && (await getUserNFTs());
+    setUserNFTs(nfts);
+  }, [getUserNFTs]);
+
+  useEffect(() => {
+    if (contractReady && mntbWalletConnected && pztAuthenticated) {
+      setIsLoadingNFTs(true);
+      onLoad();
+    }
+  }, [onLoad, contractReady, mntbWalletConnected, pztAuthenticated]);
+
+  useEffect(() => {
+    if (userNFTs !== null) {
+      setIsLoadingNFTs(false);
+    }
+  }, [userNFTs]);
 
   const actionsEnabled =
     userWalletMatches === UserWalletMatchStates.USER_WALLET_MATCHES;
@@ -78,6 +107,18 @@ export default function Home() {
     return header;
   }
 
+  function renderNFT() {
+    return (
+      <>
+        {actionsEnabled && isLoadingNFTs && <p>Loading NFT...</p>}
+        {actionsEnabled &&
+          !isLoadingNFTs &&
+          userNFTs &&
+          userNFTs.length > 0 && <NFTViewer nft={userNFTs[0]} />}
+      </>
+    );
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -87,11 +128,11 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        {/* <h1 className={styles.title}>Welcome to the demo!</h1> */}
-
         {renderPageHeader()}
 
-        <div className={styles.grid}>
+        {renderNFT()}
+
+        <div className={styles.grid} style={{ marginTop: "4rem" }}>
           <MbButton
             style={{ marginRight: "1rem", width: "15rem" }}
             label="Mint NFT"
@@ -113,45 +154,8 @@ export default function Home() {
             state={actionsEnabled ? EState.ACTIVE : EState.DISABLED}
             onClick={() => router.push("/nft/burn")}
           />
-          {/* <LinkWDisable
-            disabled={!actionsEnabled}
-            enabledHref={"/nft/mint"}
-            enabledClassName={styles.card}
-            disabledClassName={styles.card}
-          >
-            <h2>Mint NFT &rarr;</h2>
-          </LinkWDisable>
-          <LinkWDisable
-            disabled={!actionsEnabled}
-            enabledHref={"/nft/transfer"}
-            enabledClassName={styles.card}
-            disabledClassName={styles.card}
-          >
-            <h2>Transfer NFT &rarr;</h2>
-          </LinkWDisable>
-          <LinkWDisable
-            disabled={!actionsEnabled}
-            enabledHref={"/nft/burn"}
-            enabledClassName={styles.card}
-            disabledClassName={styles.card}
-          >
-            <h2>Burn NFT &rarr;</h2>
-          </LinkWDisable> */}
         </div>
       </main>
-
-      {/* <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{" "}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer> */}
     </div>
   );
 }

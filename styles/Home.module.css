@@ -47,7 +47,6 @@
 }
 
 .main h1 {
-  font-size: 2.5rem;
   width: 60%;
 }
 
@@ -92,7 +91,7 @@
 .description {
   margin: 4rem 0;
   line-height: 1.5;
-  font-size: 1.5rem;
+  font-size: 2.5rem;
 }
 
 .code {
