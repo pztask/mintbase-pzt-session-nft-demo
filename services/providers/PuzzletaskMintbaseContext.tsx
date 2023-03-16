@@ -11,16 +11,16 @@ import { useRouter } from "next/router";
 import { useWallet } from "@mintbase-js/react";
 import { EState, MbButton, ESize } from "mintbase-ui";
 import { signOut, useSession } from "next-auth/react";
-import { execute, mbjs, burn } from "@mintbase-js/sdk";
+import { execute, mbjs } from "@mintbase-js/sdk";
 
 import { NearContract } from "../../lib/near";
-import styles from "../../styles/Home.module.css";
 import {
   burnUserBoundNFT,
   getUserNFTs as pztGetUserNFTs,
   mintUserBoundNFT,
   permitRequest,
   transferUserBoundNFT,
+  getUserPermit as pztGetUserPermit,
 } from "../../lib/puzzletaskHelpers";
 
 const CONTRACT_ADRESS = process.env.CONTRACT_ADDRESS ?? "";
@@ -122,6 +122,7 @@ interface PztMntbConsumer {
   contractReady: boolean;
   associateWallet?: () => Promise<void>;
   getUserNFTs?: () => Promise<Array<any>>;
+  getUserPermit?: () => Promise<object>;
   mintNFT?: () => Promise<void>;
   transferNFT?: (tokenId: string) => Promise<void>;
   burnNFT?: (tokenId: string) => Promise<void>;
@@ -272,6 +273,13 @@ export default function PuzzletaskMintbaseProvider({
     });
   }, [nearContract, session]);
 
+  const getUserPermit = useCallback(async () => {
+    return await pztGetUserPermit({
+      nearContract: nearContract,
+      userId: (session as any)?.user?.id,
+    });
+  }, [nearContract, session]);
+
   const mintNFT = useCallback(async () => {
     const wallet = await selector.wallet();
     const mintCall = mintUserBoundNFT({
@@ -344,6 +352,7 @@ export default function PuzzletaskMintbaseProvider({
       userWalletMatches,
       associateWallet: associateWallet,
       getUserNFTs: getUserNFTs,
+      getUserPermit: getUserPermit,
       mintNFT: mintNFT,
       transferNFT: transferNFT,
       burnNFT: burnNFT,
@@ -359,20 +368,6 @@ export default function PuzzletaskMintbaseProvider({
 
   return (
     <PztMntbContext.Provider value={contextValues}>
-      {/* <header className={styles["header-actions"]}>
-        <div className={styles["header-card"]}>
-          <SignInButton
-            isSignedIn={isSignedIn}
-            email={session?.user?.email ?? ""}
-          />
-          <WalletConnectButton
-            connect={connect}
-            disconnect={disconnect}
-            isConnected={isConnected}
-            activeAccountId={activeAccountId}
-          />
-        </div>
-      </header> */}
       {children}
     </PztMntbContext.Provider>
   );

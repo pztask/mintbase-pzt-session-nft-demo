@@ -18,6 +18,7 @@ export default function Home() {
     associateWallet,
     userWalletMatches,
     getUserNFTs,
+    getUserPermit,
     contractReady,
     mintNFT,
     transferNFT,
@@ -28,6 +29,9 @@ export default function Home() {
   } = usePuzzletaskMintbaseContext();
   const [isLoadingNFTs, setIsLoadingNFTs] = useState(false);
   const [userNFTs, setUserNFTs] = useState<any>(null);
+
+  const [isLoadingPermit, setIsLoadingPermit] = useState(false);
+  const [userPermit, setUserPermit] = useState<any>(null);
 
   const onLoad = useCallback(async () => {
     const nfts = getUserNFTs && (await getUserNFTs());
@@ -47,8 +51,30 @@ export default function Home() {
     }
   }, [userNFTs]);
 
+  const checkPermit = useCallback(async () => {
+    const permit = getUserPermit && (await getUserPermit());
+    setUserPermit(permit);
+    // TODO: Review
+    setIsLoadingPermit(false);
+  }, [getUserPermit]);
+
+  useEffect(() => {
+    if (userWalletMatches === UserWalletMatchStates.USER_WALLET_MATCHES) {
+      setIsLoadingPermit(true);
+      checkPermit();
+    }
+  }, [
+    checkPermit,
+    userWalletMatches,
+    contractReady,
+    mntbWalletConnected,
+    pztAuthenticated,
+  ]);
+
   const actionsEnabled =
-    userWalletMatches === UserWalletMatchStates.USER_WALLET_MATCHES;
+    userWalletMatches === UserWalletMatchStates.USER_WALLET_MATCHES &&
+    userPermit !== null &&
+    userPermit.account_id === mntbWallet?.activeAccountId;
   const nftAlreadyInWallet =
     userNFTs &&
     userNFTs.length > 0 &&
@@ -64,24 +90,46 @@ export default function Home() {
     let header = null;
     switch (userWalletMatches) {
       case UserWalletMatchStates.USER_WALLET_MATCHES:
-        if (mintEnabled) {
-          header = (
-            <h1 className={styles.description}>You can now mint your nft.</h1>
-          );
-        } else if (transferEnabled) {
-          header = (
-            <h1 className={styles.description}>
-              Your NFT is not in this wallet. <br /> You can get it back it by
-              pressing the transfer button.
-            </h1>
-          );
+        if (isLoadingPermit) {
+          header = <h1 className={styles.description}>Loading...</h1>;
         } else {
-          header = (
-            <h1 className={styles.description}>
-              Your NFT is in this wallet. <br /> You can now burn it, if you
-              want to.
-            </h1>
-          );
+          if (
+            userPermit === null ||
+            userPermit.account_id !== mntbWallet?.activeAccountId
+          ) {
+            header = (
+              <>
+                <h1 className={styles.description}>
+                  The verification process is running, please refresh the page.
+                </h1>
+                <MbButton
+                  style={{ width: "15rem", height: "4rem" }}
+                  label="Refresh"
+                  size={ESize.BIG}
+                  state={EState.ACTIVE}
+                  onClick={() => location.reload()}
+                />
+              </>
+            );
+          } else if (mintEnabled) {
+            header = (
+              <h1 className={styles.description}>You can now mint your nft.</h1>
+            );
+          } else if (transferEnabled) {
+            header = (
+              <h1 className={styles.description}>
+                Your NFT is not in this wallet. <br /> You can get it back it by
+                pressing the transfer button.
+              </h1>
+            );
+          } else {
+            header = (
+              <h1 className={styles.description}>
+                Your NFT is in this wallet. <br /> You can now burn it, if you
+                want to.
+              </h1>
+            );
+          }
         }
         break;
       case UserWalletMatchStates.USER_WALLET_NOT_MATCHES:

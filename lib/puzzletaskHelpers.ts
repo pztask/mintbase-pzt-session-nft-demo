@@ -58,6 +58,11 @@ type getUserNFTsArgs = {
   userId: string;
 };
 
+type getUserPermitArgs = {
+  nearContract: Contract | any;
+  userId: string;
+};
+
 function mintingDeposit({ metadata }: { metadata: TokenMetadata }): string {
   const bytesPerToken = STORAGE_BYTES.TOKEN_BASE * STORAGE_BYTES.COMMON;
   const metadataBytesEstimate = JSON.stringify(metadata).length;
@@ -143,13 +148,31 @@ export const permitRequest = function (
 export const getUserNFTs = async function (
   args: getUserNFTsArgs
 ): Promise<Array<any>> {
-  /*   
+  /*
   We used the near-api-js for this call because
   we couldn't find a way to make call without
   signing them through @mintbase-js/sdk
   */
   const response = await args.nearContract
     .nft_tokens_for_user({
+      user_id: args.userId,
+    })
+    .catch((e: any) => {
+      alert(e);
+    });
+  return response;
+};
+
+export const getUserPermit = async function (
+  args: getUserPermitArgs
+): Promise<Array<any>> {
+  /*
+  We used the near-api-js for this call because
+  we couldn't find a way to make call without
+  signing them through @mintbase-js/sdk
+  */
+  const response = await args.nearContract
+    .permit_for_user({
       user_id: args.userId,
     })
     .catch((e: any) => {

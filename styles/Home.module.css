@@ -12,6 +12,13 @@
 
 .header-title {
   margin-left: 2rem;
+  font-size: 1.5rem;
+}
+.header-title:hover,
+.header-title:focus,
+.header-title:active {
+  color: #5c5c5c;
+  border-color: #5c5c5c;
 }
 
 .header-card {

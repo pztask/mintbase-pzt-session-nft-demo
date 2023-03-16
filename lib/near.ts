@@ -21,7 +21,7 @@ export async function NearContract(
 
   const contract = new Contract(nearAccount, CONTRACT_ADDRESS, {
     changeMethods: [],
-    viewMethods: ["nft_tokens_for_user"],
+    viewMethods: ["nft_tokens_for_user", "permit_for_user"],
   });
   return contract;
 }
