@@ -59,7 +59,10 @@ export default function Home() {
   }, [getUserPermit]);
 
   useEffect(() => {
-    if (userWalletMatches === UserWalletMatchStates.USER_WALLET_MATCHES) {
+    if (
+      contractReady &&
+      userWalletMatches === UserWalletMatchStates.USER_WALLET_MATCHES
+    ) {
       setIsLoadingPermit(true);
       checkPermit();
     }
@@ -155,7 +158,7 @@ export default function Home() {
               </p>
             </h1>
             <MbButton
-              style={{ width: "15rem", height: "4rem" }}
+              style={{ width: "15rem", height: "4rem", marginBottom: "2rem" }}
               label="Link Wallet"
               size={ESize.BIG}
               state={EState.ACTIVE}
@@ -192,11 +195,10 @@ export default function Home() {
   function renderNFT() {
     return (
       <>
-        {actionsEnabled && isLoadingNFTs && <p>Loading NFT...</p>}
-        {actionsEnabled &&
-          !isLoadingNFTs &&
-          userNFTs &&
-          userNFTs.length > 0 && <NFTViewer nft={userNFTs[0]} />}
+        {isLoadingNFTs && <p>Loading NFT...</p>}
+        {!isLoadingNFTs && userNFTs && userNFTs.length > 0 && (
+          <NFTViewer nft={userNFTs[0]} />
+        )}
       </>
     );
   }
