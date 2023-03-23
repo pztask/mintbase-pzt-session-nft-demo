@@ -4,7 +4,7 @@ const nextConfig = {
   swcMinify: true,
   env: {
     NEAR_RPC_URL: process.env.NEAR_RPC_URL,
-    CONTRACT_ADDRESS: process.env.CONTRACT_ADDRESS,
+    NEAR_CONTRACT_ID: process.env.NEAR_CONTRACT_ID,
   },
 };
 

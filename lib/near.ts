@@ -2,7 +2,7 @@ import { connect, Contract, keyStores } from "near-api-js";
 import { Network } from "mintbase";
 
 const NEAR_RPC_URL = process.env.NEAR_RPC_URL ?? "";
-const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS ?? "";
+const NEAR_CONTRACT_ID = process.env.NEAR_CONTRACT_ID ?? "";
 
 export async function NearContract(
   accountId: string | null
@@ -19,7 +19,7 @@ export async function NearContract(
 
   const nearAccount = await connection.account(accountId);
 
-  const contract = new Contract(nearAccount, CONTRACT_ADDRESS, {
+  const contract = new Contract(nearAccount, NEAR_CONTRACT_ID, {
     changeMethods: [],
     viewMethods: ["nft_tokens_for_user", "permit_for_user"],
   });

@@ -23,7 +23,7 @@ import {
   getUserPermit as pztGetUserPermit,
 } from "../../lib/puzzletaskHelpers";
 
-const CONTRACT_ADRESS = process.env.CONTRACT_ADDRESS ?? "";
+const CONTRACT_ADRESS = process.env.NEAR_CONTRACT_ID ?? "";
 
 // TODO: Review props declaration
 export function WalletConnectButton(/* {
