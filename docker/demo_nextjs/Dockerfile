@@ -4,15 +4,16 @@ WORKDIR /app
 COPY . .
 
 RUN yarn install
-RUN yarn build
+
+ENV DATABASE_URL file:./dev.db
 
 RUN yarn run prisma migrate dev && yarn run prisma db seed
 
-ENV NODE_ENV production
+ENV NODE_ENV development
 ENV NEXT_TELEMETRY_DISABLED 1
 
 EXPOSE 3000
 
 ENV PORT 3000
 
-CMD ["yarn", "start"]
+CMD ["yarn", "dev"]
