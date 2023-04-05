@@ -2,7 +2,7 @@
 
 Instructions on how to setup the demo environment using docker and docker-compose.
 
-This docker-compose demo instructions assume you're in this "docker" directory.
+This docker-compose demo instructions assume you're working in this directory (./docker).
 
 ## Requirements
 
@@ -16,14 +16,14 @@ Use the `.env.example` file available in the docker directory to create your own
 - NEAR_ENV : The near network that should be used by the near-cli when deploying the contract.
 - NEAR_NETWORK : The near network that should be used by the oracle bot to access the contract.
 - NEAR_PRIVATE_KEY : You account private key for the oracle bot to access the contract functions.
-- NEAR_CONTRACT_ID : The near smart contract address to be used by the near-cli to deploy the contract.
 - NEAR_ACCOUNT_ID : Your near account id used by the oracle bot to make the contract calls (usually the same as $NEAR_CONTRACT_ID).
+- NEAR_CONTRACT_ID : The near smart contract address to be used by the near-cli to deploy the contract.
 - NEAR_RPC_URL : The RPC endpoint used by the oracle bot to contact the smart contract, should match the network used. (Ref. [RPC Setup](https://docs.near.org/api/rpc/setup)
 - CONTRACT_REPO : The smart contract repository used for the contract deploy step. (Use ours for the demo: https://github.com/pztask/mintbase-pzt-session-nft-contract )
 - ORACLE_BOT_REPO : The oracle bot repository used for the bot. (Use ours for the demo: https://github.com/pztask/mintbase-pzt-session-nft-bot )
 - API_BASE_URL : The api address used by the bot to check for permits. (Use ours inside the docker container environment: http://mintbase-pzt-session-nft-demo:3000 )
 - NEXTAUTH_SECRET : Some string to be used as the NextAuth.js secret for encryption and security purposes.
-- DATABASE_URL : The sqlite3 database file path, you can just leave it as it is if no special configuration is needed.
+- DATABASE_URL : The next app sqlite3 database file path, you can just leave it as it is if no special configuration is needed.
 
 ## 2. Deploy our smart contract
 
@@ -43,7 +43,7 @@ If you're running the following command for the second time, you'll get a warnin
 docker run --env-file='.env' -it pzt/smart_contract_deploy
 ```
 
-## 3. Add data to the api
+## 3. Prepare the API data
 
 The api comes with only two test users available in the `prisma/seed.ts` file.
 
@@ -55,8 +55,6 @@ jane.doe@example.com:password1
 These should be enough to test the demo, but if you want to add and test your custom users please edit the `prisma/seed.ts` file with your own data to be loaded into the api before the next step.
 
 ## 4. Start the docker-compose environment
-
-This step requires you to create your onw version of the **project root's .env** file. Copy .env.example to .env and set it accordingly.
 
 You can just run the following command and everything should the ready to go:
 
@@ -84,7 +82,7 @@ mintbase-pzt-session-nft-bot   | info: Permits to verify: {"permits":[]}
 mintbase-pzt-session-nft-bot   | info: There's no permits to verify.
 ```
 
-**Note:** If you see some deprecation warnings on the oracle bot, it's fine the near-sdk is still in development and some things are evolving and changing.
+**Note:** If you see some deprecation warnings on the oracle bot, it's fine, the near-sdk is still in development and some things are evolving and changing.
 
 ## 4. Testing the demo
 

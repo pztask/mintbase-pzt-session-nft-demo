@@ -2,6 +2,28 @@
 
 Simple project to demonstrate how to use the mintbase-pzt-session-nft lib.
 
+## Introduction
+
+This repo is meant to be used as a demo for the Mintbase Puzzletask Session-NFT use case and open-source lib.
+
+The idea behind our use case is that an NFT will be bound to a puzzletask user and that use can manage it's NFTs without the need to be the NFT owner. We can check our NFTs with just the puzzletask user session and we can also transfer the NFTs between different wallets, even if we loose access to the wallet where the NFTs are stored.
+
+A good comparison is the Multi-Factor Authentication auth solutions. If we store our OTPs on Google Authenticator and we loose our phone, the OTPs are lost for good unless we have the recovery phrases. In response to this some companies created a way to attach your OTPs to your phone number or email address, like Authy. So, even if you lose your phone you just need to login again on the app to recover all your OTPs.
+
+With Mintbase Puzzletask Session-NFT we are able to keep a hold on the NFTs without the need of the original wallet, we just need any wallet we want and the puzzletask user session to manage our NFTs, and they will never be lost. All the user needs is to be logged in and associate a wallet to it's user (we called it a `permit`). This permits are registered both in the API and the smart contract, for full tranparency and to be auditable to a certain point by anyone.
+
+### Architecture
+
+Image here.
+
+There's three main blocks in our architecture, the browser page, the [smart contract](https://github.com/pztask/mintbase-pzt-session-nft-contract) and the puzzletask API.
+
+The browser page handles all the puzzetask user session, the wallet session and the NFTs management. This is done using our [lib](https://github.com/pztask/mintbase-pzt-session-nft-lib) and our specific helpers.
+
+The [smart contract](https://github.com/pztask/mintbase-pzt-session-nft-contract) is based on the zero to hero tutorial from Near, with some capabilities removed in favor of our custom puzzletask user layer and because we thought about this use case as a closed environment.
+
+The puzzletask API is a simple REST API to handle the user login, and also register and check permits.
+
 ## Docker compose demo environment
 
 If you just want to try the demo follow the instrunctions in the [docker directory](docker/README.md) and ignore the rest of this README file.
@@ -44,7 +66,18 @@ yarn run prisma db seed
 
 4. The demo is now ready to use the database.
 
-**Note:** If you need a clean fresh database, run this:
+**Notes:**
+
+The api comes with only two test users available in the `prisma/seed.ts` file.
+
+```
+john.doe@example.com:password1
+jane.doe@example.com:password1
+```
+
+These should be enough to test the demo, but if you want to add and test your custom users please edit the `prisma/seed.ts` file with your own data to be loaded into the api before the next step.
+
+Also, if you need a clean fresh database, run this:
 
 ```
 yarn run prisma migrate reset
