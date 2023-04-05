@@ -14,7 +14,8 @@ With Mintbase Puzzletask Session-NFT we are able to keep a hold on the NFTs with
 
 ### Architecture
 
-Image here.
+![image](https://user-images.githubusercontent.com/30434316/230063375-75c48777-4757-4fc1-864a-30e515bc262f.png)
+
 
 There's three main blocks in our architecture, the browser page, the [smart contract](https://github.com/pztask/mintbase-pzt-session-nft-contract) and the puzzletask API.
 
