@@ -3,7 +3,6 @@ import { SessionProvider } from "next-auth/react";
 import { WalletContextProvider } from "@mintbase-js/react";
 import "@near-wallet-selector/modal-ui/styles.css";
 
-// import { WalletProvider } from "../services/providers/MintbaseWalletContext";
 import PuzzletaskMintbaseContext from "../services/providers/PuzzletaskMintbaseContext";
 
 import "../styles/globals.css";
