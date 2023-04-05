@@ -25,6 +25,7 @@
     "eslint-config-next": "13.0.6",
     "mintbase": "^0.8.5-rc.2",
     "mintbase-ui": "^0.9.11",
+    "near-api-js": "^2.0.4",
     "next": "13.0.6",
     "next-auth": "^4.18.5",
     "prisma": "^4.7.1",
