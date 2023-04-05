@@ -1,7 +1,5 @@
 # Mintbase Puzzletask Session-NFT Demo
 
-Simple project to demonstrate how to use the mintbase-pzt-session-nft lib.
-
 ## Introduction
 
 This repo is meant to be used as a demo for the Mintbase Puzzletask Session-NFT use case and open-source lib.
