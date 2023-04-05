@@ -22,6 +22,8 @@ Use the `.env.example` file available in the docker directory to create your own
 - CONTRACT_REPO : The smart contract repository used for the contract deploy step. (Use ours for the demo: https://github.com/pztask/mintbase-pzt-session-nft-contract )
 - ORACLE_BOT_REPO : The oracle bot repository used for the bot. (Use ours for the demo: https://github.com/pztask/mintbase-pzt-session-nft-bot )
 - API_BASE_URL : The api address used by the bot to check for permits. (Use ours inside the docker container environment: http://mintbase-pzt-session-nft-demo:3000 )
+- NEXTAUTH_SECRET : Some string to be used as the NextAuth.js secret for encryption and security purposes.
+- DATABASE_URL : The sqlite3 database file path, you can just leave it as it is if no special configuration is needed.
 
 ## 2. Deploy our smart contract
 

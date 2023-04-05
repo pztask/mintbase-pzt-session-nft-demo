@@ -2,42 +2,32 @@
 
 Simple project to demonstrate how to use the mintbase-pzt-session-nft lib.
 
-## Disclaimers
+## Docker compose demo environment
 
-### Why we didn't use the @mintbase-js/sdk?
+If you just want to try the demo follow the instrunctions in the [docker directory](docker/README.md) and ignore the rest of this README file.
 
-Through out the project we ended up not using the `@mintbase-js/sdk` to make our contract calls on the frontend and on the bot. This is mainly because the default `mint` and `transfer` functions available on the `@mintbase-js/sdk` do not allow changing its parameters. This is limiting the ability to call our contract mint and transfer functions because they spent more gas than the standard (we are using more cpu time and storage) and we can't, for example, change the gas and fee used needed for the transaction.
+## Local development
 
-## Getting Started
+### 1. Set environment variables
 
-If you want to try the demo just copy the root .env.example file to .env, set it accordingly (see example below) and continue the instrunctions in the [docker directory](docker/README.md).
+Start by renaming the `.env.example` file to `.env` and change the variables accordingly to your setup.
 
-- DATABASE_URL="file:./dev.db"
-- NEXTAUTH_SECRET="any_secret"
-- AUTH_TRUST_HOST="localhost"
+This is a quick explanation of the variables used:
 
-## Running the Development environment
+- DATABASE_URL : The next app sqlite3 database file path, you can just leave it as it is if no special configuration is needed.
+- NEXTAUTH_SECRET : Some string to be used as the nextauth secret for encryption and security purposes.
+- NEAR_RPC_URL : The RPC endpoint used by the oracle bot to contact the smart contract, should match the network used. (Ref. [RPC Setup](https://docs.near.org/api/rpc/setup)
+- NEAR_CONTRACT_ID : The near smart contract address to be used by the near-cli to deploy the contract.
 
-First, run the development server:
+### 2. Install dependencies
+
+Run:
 
 ```bash
-npm run dev
-# or
-yarn dev
+yarn install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/<endpoint>](http://localhost:3000/api/<endpoint>). This endpoint can be edited in `pages/api/<endpoint>.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-[Mintbase]
-Add a Mintbase API key to the .env file in order to enable its functionality
-
-## Setup database (sqlite) with Prisma
+### 3. Setup database (sqlite) with Prisma
 
 1. Edit your .env file with the location and database file name you want. (check the existing .env.example)
 2. Run the prisma migrations with:
@@ -59,3 +49,27 @@ yarn run prisma db seed
 ```
 yarn run prisma migrate reset
 ```
+
+### 4. Running the demo
+
+First, start the development server:
+
+```bash
+yarn dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the home page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+
+[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/<endpoint>](http://localhost:3000/api/<endpoint>). This endpoint can be edited in `pages/api/<endpoint>.ts`.
+
+The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+
+## mintbase-pzt-session-nft-lib
+
+In this project we have a git submodule for our [lib repo](https://github.com/pztask/mintbase-pzt-session-nft-lib) which has it's own README.
+
+This lib includes helpers to be used together with mintbase JS `execute` function. This helpers use our concept of a _user bound NFT_ and will mint, transfer and burn NFTs with the user information and we can also request new _permits_ on the smartcontract. We also provide some additional functions to fetch information from the smartcontract, these are views and are not to be ran together with the `execute` function.
+
+For more information about the lib, please refer to the [README](https://github.com/pztask/mintbase-pzt-session-nft-lib/blob/main/README).
