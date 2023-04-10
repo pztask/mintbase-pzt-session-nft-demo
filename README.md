@@ -12,8 +12,7 @@ With Mintbase Puzzletask Session-NFT we are able to keep a hold on the NFTs with
 
 ### Architecture
 
-![image](https://user-images.githubusercontent.com/30434316/230063375-75c48777-4757-4fc1-864a-30e515bc262f.png)
-
+<img src="https://github.com/pztask/mintbase-pzt-session-nft-demo/blob/develop/doc/pzt-architecture.png" width="60%">
 
 There's three main blocks in our architecture, the browser page, the [smart contract](https://github.com/pztask/mintbase-pzt-session-nft-contract) and the puzzletask API.
 
@@ -22,6 +21,10 @@ The browser page handles all the puzzetask user session, the wallet session and 
 The [smart contract](https://github.com/pztask/mintbase-pzt-session-nft-contract) is based on the zero to hero tutorial from Near, with some capabilities removed in favor of our custom puzzletask user layer and because we thought about this use case as a closed environment.
 
 The puzzletask API is a simple REST API to handle the user login, and also register and check permits.
+
+Here's the workflow of our use case with the communication between our main blocks.
+
+<img src="https://github.com/pztask/mintbase-pzt-session-nft-demo/blob/develop/doc/pzt-workflow.png" width="75%">
 
 ## Docker compose demo environment
 
