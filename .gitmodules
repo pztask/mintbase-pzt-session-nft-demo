@@ -1,0 +1,3 @@
+[submodule "lib"]
+	path = lib
+	url = https://github.com/pztask/mintbase-pzt-session-nft-lib

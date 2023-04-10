@@ -2,9 +2,50 @@
   padding: 0 2rem;
 }
 
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.header-title {
+  margin-left: 2rem;
+  font-size: 1.5rem;
+}
+.header-title:hover,
+.header-title:focus,
+.header-title:active {
+  color: #5c5c5c;
+  border-color: #5c5c5c;
+}
+
+.header-card {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 1rem;
+  padding: 1.5rem;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  width: 45rem;
+}
+
+.header-card:hover,
+.header-card:focus,
+.header-card:active {
+  color: #0070f3;
+  border-color: #0070f3;
+}
+
 .main {
-  min-height: 100vh;
-  padding: 4rem 0;
+  min-height: 80vh;
+  /* padding: 4rem 0; */
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -53,7 +94,12 @@
 .description {
   margin: 4rem 0;
   line-height: 1.5;
-  font-size: 1.5rem;
+  font-size: 2.5rem;
+  width: 60%;
+}
+
+.description p {
+  margin-bottom: 1rem;
 }
 
 .code {
@@ -66,6 +112,7 @@
 }
 
 .grid {
+  margin-top: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -102,6 +149,37 @@
   font-size: 1.25rem;
   line-height: 1.5;
 }
+
+.login-card {
+  margin: 1rem;
+  padding: 1.5rem;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  max-width: 500px;
+}
+
+.login-form {
+  display: flex;
+  flex-flow: column;
+  font-size: 16px;
+}
+
+.login-form input {
+  margin-bottom: 1.5rem;
+  margin-left: 1rem;
+  border: 1px solid #eaeaea;
+  /* border-radius: 10px; */
+  width: 100%;
+}
+
+.login-form label {
+  display: flex;
+}
+
 
 .logo {
   height: 1em;

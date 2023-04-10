@@ -1,0 +1,26 @@
+services:
+  mintbase-pzt-session-nft-demo:
+    build:
+      context: ..
+      dockerfile: docker/demo_nextjs/Dockerfile
+    container_name: mintbase-pzt-session-nft-demo
+    env_file: .env
+    ports:
+      - "3000:3000"
+    networks:
+      - mintbase-pzt
+
+  mintbase-pzt-session-nft-bot:
+    build:
+      context: ..
+      dockerfile: docker/oracle_bot/Dockerfile
+      args:
+        ORACLE_BOT_REPO: ${ORACLE_BOT_REPO}
+    container_name: mintbase-pzt-session-nft-bot
+    env_file: .env
+    networks:
+      - mintbase-pzt
+
+networks:
+  mintbase-pzt:
+    name: mintbase-pzt
