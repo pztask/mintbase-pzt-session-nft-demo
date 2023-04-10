@@ -24,7 +24,7 @@ The puzzletask API is a simple REST API to handle the user login, and also regis
 
 Here's the workflow of our use case with the communication between our main blocks.
 
-<img src="https://github.com/pztask/mintbase-pzt-session-nft-demo/blob/develop/doc/pzt-workflow.png" width="75%">
+<img src="https://github.com/pztask/mintbase-pzt-session-nft-demo/blob/develop/doc/pzt-workflow.png" width="100%">
 
 ## Docker compose demo environment
 
